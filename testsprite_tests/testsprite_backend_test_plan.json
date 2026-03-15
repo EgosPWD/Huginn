@@ -12,22 +12,22 @@
   {
     "id": "TC003",
     "title": "post api analyze handles serpapi key missing with graceful degradation",
-    "description": "Test POST /api/analyze when the SERPAPI_KEY environment variable is not set or invalid. Verify that the response still returns 200 with partial results where globalContext and authorContext arrays are empty, and authorHistory is enriched using DuckDuckGo fallback."
+    "description": "Test POST /api/analyze when the SERPAPI_KEY environment variable is not set or invalid. Verify that the API returns partial results with empty globalContext and authorContext arrays, uses DuckDuckGo as fallback for author history, and does not break the pipeline."
   },
   {
     "id": "TC004",
     "title": "post api analyze handles wikidata sparql empty results gracefully",
-    "description": "Test POST /api/analyze with a domain that does not exist in Wikidata. Verify that the ownership chain is returned as an empty array or with an explicit fallback owner string 'No encontrado en Wikidata' and the response status is 200."
+    "description": "Test POST /api/analyze when the Wikidata SPARQL query returns empty or no ownership data. Verify that the ownership chain is returned as an empty array or with an explicit fallback owner string 'No encontrado en Wikidata' and the pipeline continues without error."
   },
   {
     "id": "TC005",
     "title": "post api analyze handles openrouter api key missing with fallback strings",
-    "description": "Test POST /api/analyze when the OPENROUTER_API_KEY environment variable is missing or the OpenRouter model fails. Verify that the contrast analysis, authorHistory pattern, and ownership summary fields contain the fallback string 'No disponible' and the response status is 200."
+    "description": "Test POST /api/analyze when the OPENROUTER_API_KEY is missing or the OpenRouter model fails. Verify that the contrast analysis, author pattern, and ownership summary fields contain the fallback string 'No disponible' and the response is still 200 with partial data."
   },
   {
     "id": "TC006",
     "title": "post api analyze handles postlight parser partial extraction with og meta fallback",
-    "description": "Test POST /api/analyze with a URL from a client-side rendered site where Postlight Parser fails to extract title or author. Verify that the server falls back to OG meta tags or returns empty strings for title and author, continues processing, and returns a 200 response with partial article metadata."
+    "description": "Test POST /api/analyze with a URL from a client-side rendered site where Postlight Parser fails to extract title or author. Verify that the server falls back to reading OG meta tags or returns empty strings for title and author, continues subsequent calls, and returns 200 with partial article fields."
   },
   {
     "id": "TC007",

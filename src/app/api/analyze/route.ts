@@ -8,7 +8,10 @@ import {
   searchOutletDDG,
   searchTopicDDG,
 } from "@/lib/duckduckgo";
-import type { AnalysisResponse, AnalyzeRequest } from "@/types/analysis";
+import { getEmbeddings, getEmbeddingsIndexed } from "@/lib/embeddings";
+import { centroid, cosineSimilarity, divergenceScore } from "@/lib/vector-math";
+import { interpretDivergence } from "@/lib/interpret";
+import type { AnalysisResponse, AnalyzeRequest, NarrativeDivergence } from "@/types/analysis";
 
 export async function POST(request: NextRequest) {
   // Parse body — treat malformed/empty JSON as missing URL
@@ -69,7 +72,62 @@ export async function POST(request: NextRequest) {
       ...ddgAuthor.articles.filter((a) => !seenUrls.has(a.link)),
     ];
 
-    // Step 4 — LLM contrast analysis with all enriched context
+    // Step 4 — Narrative Divergence Score (embeddings in parallel)
+    const globalSnippets = globalContext.map((r) => r.snippet || r.title).filter(Boolean);
+    const authorSnippets = mergedAuthorArticles.map((r) => r.snippet || r.title).filter(Boolean);
+
+    const NULL_DIVERGENCE: NarrativeDivergence = {
+      score: null,
+      interpretation: "Not available",
+      globalSnippetsCount: 0,
+      authorSnippetsCount: 0,
+      divergentSources: [],
+    };
+
+    let narrativeDivergence: NarrativeDivergence;
+    try {
+      const [globalEmbeds, authorIndexed] = await Promise.all([
+        getEmbeddings(globalSnippets),
+        getEmbeddingsIndexed(authorSnippets),
+      ]);
+
+      // Guard: if either side has no embeddings, API key is missing or all calls failed
+      if (globalEmbeds.length === 0 || authorIndexed.length === 0) {
+        narrativeDivergence = NULL_DIVERGENCE;
+      } else {
+        const globalCentroid = centroid(globalEmbeds);
+        const authorEmbeds = authorIndexed.map((e) => e.embedding);
+        const authorCentroid = centroid(authorEmbeds);
+        const score = divergenceScore(globalCentroid, authorCentroid);
+
+        // Rank each author article by its own distance from global consensus
+        const divergentSources = authorIndexed
+          .map(({ index, embedding }) => {
+            const article = mergedAuthorArticles[index];
+            return {
+              title: article.title,
+              source: article.source,
+              link: article.link,
+              snippet: article.snippet,
+              divergenceScore: Math.round((1 - cosineSimilarity(embedding, globalCentroid)) * 10000) / 100,
+            };
+          })
+          .sort((a, b) => b.divergenceScore - a.divergenceScore)
+          .slice(0, 5);
+
+        narrativeDivergence = {
+          score,
+          interpretation: interpretDivergence(score),
+          globalSnippetsCount: globalEmbeds.length,
+          authorSnippetsCount: authorEmbeds.length,
+          divergentSources,
+        };
+      }
+    } catch {
+      narrativeDivergence = NULL_DIVERGENCE;
+    }
+
+    // Step 5 — LLM contrast analysis with all enriched context
     const report = await generateReport(
       article.title,
       article.author,
@@ -92,6 +150,7 @@ export async function POST(request: NextRequest) {
       contrast: {
         analysis: report.contrastAnalysis,
       },
+      narrativeDivergence,
       raw: {
         globalContext,
         authorContext,

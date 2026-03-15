@@ -76,6 +76,24 @@ export interface RawContext {
   outletContext: NewsResult[];  // DDG outlet/owner related links
 }
 
+// --- Narrative Divergence Score ---
+
+export interface DivergentSource {
+  title: string;
+  source: string;
+  link: string;
+  snippet: string;
+  divergenceScore: number;
+}
+
+export interface NarrativeDivergence {
+  score: number | null;
+  interpretation: string;
+  globalSnippetsCount: number;
+  authorSnippetsCount: number;
+  divergentSources: DivergentSource[];
+}
+
 // --- Full analysis response ---
 
 export interface AnalysisResponse {
@@ -83,6 +101,7 @@ export interface AnalysisResponse {
   ownership: Ownership;
   authorHistory: AuthorHistory;
   contrast: Contrast;
+  narrativeDivergence: NarrativeDivergence;
   raw: RawContext;
 }
 

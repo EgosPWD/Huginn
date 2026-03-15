@@ -136,6 +136,7 @@ export async function generateReport(
 
     const data: OpenRouterResponse = await response.json();
     const content = data.choices?.[0]?.message?.content ?? "";
+    if (!content.trim()) return fallback;
     const parsed = JSON.parse(content) as Partial<LLMReport>;
 
     return {
