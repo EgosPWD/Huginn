@@ -50,7 +50,7 @@ export function AnalyzerForm() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#05080f] text-zinc-100">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#05080f] text-zinc-100">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-24 top-0 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
         <div className="absolute right-0 top-1/3 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
