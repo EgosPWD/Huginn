@@ -1,0 +1,70 @@
+version: "2"
+type: backend
+tech_stack:
+  - language: TypeScript
+  - framework: Next.js 16 App Router
+  - runtime: Node.js / Bun
+  - http_client: fetch (native)
+  - other: Postlight Parser, SerpApi, Wikidata SPARQL, DuckDuckGo Instant Answer API, OpenRouter LLM
+features:
+  - name: Media Analysis API
+    description: Analyzes a news article URL and returns a 3-layer media intelligence report covering ownership chain, author history, and AI-generated contrast analysis
+    files:
+      - src/app/api/analyze/route.ts
+      - src/lib/parser.ts
+      - src/lib/serpapi.ts
+      - src/lib/wikidata.ts
+      - src/lib/duckduckgo.ts
+      - src/lib/openrouter.ts
+      - src/types/analysis.ts
+    endpoints:
+      - method: POST
+        path: /api/analyze
+        description: Receives a news article URL and returns ownership chain (Wikidata), author history (SerpApi + DuckDuckGo), and contrast analysis (OpenRouter LLM)
+        auth_required: false
+        request_schema:
+          body:
+            url: string
+        response_schema:
+          "200":
+            article:
+              title: string
+              author: string
+              domain: string
+              content: string
+            ownership:
+              chain: string[]
+              summary: string
+            authorHistory:
+              bio: string
+              articles: NewsResult[]
+              pattern: string
+            contrast:
+              analysis: string
+            raw:
+              globalContext: NewsResult[]
+              authorContext: NewsResult[]
+          "400": '{ error: string }'
+          "500": '{ error: string }'
+    depends_on:
+      - Postlight Parser (external npm package)
+      - SerpApi Google News (SERPAPI_KEY env var)
+      - Wikidata SPARQL public endpoint
+      - DuckDuckGo Instant Answer API (no key)
+      - OpenRouter API (OPENROUTER_API_KEY env var)
+known_limitations:
+  - issue: Postlight Parser fails to extract title/author from sites using client-side rendering (e.g. CNN); OG meta fallback is used
+    location: src/lib/parser.ts
+    impact: Author and title may fall back to OG meta tags instead of article body
+  - issue: Wikidata SPARQL may not find lesser-known media outlets
+    location: src/lib/wikidata.ts
+    impact: Ownership chain returns empty with "No encontrado en Wikidata"
+  - issue: SerpApi returns 401 when SERPAPI_KEY is not set
+    location: src/lib/serpapi.ts
+    impact: authorContext and globalContext will be empty arrays; DuckDuckGo still runs as fallback
+  - issue: OpenRouter returns fallback strings when OPENROUTER_API_KEY is not set or model fails
+    location: src/lib/openrouter.ts
+    impact: contrast.analysis, authorHistory.pattern, and ownership.summary from LLM will show "No disponible"
+  - issue: DuckDuckGo RelatedTopics may return sparse results for authors without Wikipedia pages
+    location: src/lib/duckduckgo.ts
+    impact: authorHistory.bio will be empty string and articles list may be short

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TC001",
+    "title": "post api analyze with valid url returns full analysis",
+    "description": "Test POST /api/analyze with a valid news article URL in the request body. Verify that the response status is 200 and the response body contains the article metadata, ownership chain, author history, contrast analysis, and raw context arrays as per the schema."
+  },
+  {
+    "id": "TC002",
+    "title": "post api analyze with missing url returns 400 error",
+    "description": "Test POST /api/analyze with an empty or missing url field in the request body. Verify that the response status is 400 and the response body contains an error message indicating that the url is required."
+  },
+  {
+    "id": "TC003",
+    "title": "post api analyze handles serpapi key missing with graceful degradation",
+    "description": "Test POST /api/analyze when the SERPAPI_KEY environment variable is not set or invalid. Verify that the response still returns 200 with partial results where globalContext and authorContext arrays are empty, and authorHistory is enriched using DuckDuckGo fallback."
+  },
+  {
+    "id": "TC004",
+    "title": "post api analyze handles wikidata sparql empty results gracefully",
+    "description": "Test POST /api/analyze with a domain that does not exist in Wikidata. Verify that the ownership chain is returned as an empty array or with an explicit fallback owner string 'No encontrado en Wikidata' and the response status is 200."
+  },
+  {
+    "id": "TC005",
+    "title": "post api analyze handles openrouter api key missing with fallback strings",
+    "description": "Test POST /api/analyze when the OPENROUTER_API_KEY environment variable is missing or the OpenRouter model fails. Verify that the contrast analysis, authorHistory pattern, and ownership summary fields contain the fallback string 'No disponible' and the response status is 200."
+  },
+  {
+    "id": "TC006",
+    "title": "post api analyze handles postlight parser partial extraction with og meta fallback",
+    "description": "Test POST /api/analyze with a URL from a client-side rendered site where Postlight Parser fails to extract title or author. Verify that the server falls back to OG meta tags or returns empty strings for title and author, continues processing, and returns a 200 response with partial article metadata."
+  },
+  {
+    "id": "TC007",
+    "title": "post api analyze returns 500 on unexpected server error",
+    "description": "Test POST /api/analyze with inputs or conditions that cause an unexpected server error. Verify that the response status is 500 and the response body contains an error message."
+  }
+]
