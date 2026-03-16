@@ -12,205 +12,153 @@
 
 ## 2️⃣ Requirement Validation Summary
 
-#### Test TC001 post api analyze with valid url returns full analysis
-- **Test Code:** [TC001_post_api_analyze_with_valid_url_returns_full_analysis.py](./TC001_post_api_analyze_with_valid_url_returns_full_analysis.py)
-- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/005ceff7-c2ae-4a7d-83af-6f2a53e28d4a/718cf1f3-8229-4cd4-8a0f-ad4a67d72f64
+#### Test TC001 Loading spinner and message appear after submitting a valid URL
+- **Test Code:** [TC001_Loading_spinner_and_message_appear_after_submitting_a_valid_URL.py](./TC001_Loading_spinner_and_message_appear_after_submitting_a_valid_URL.py)
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/15402905-6787-4abe-8cf7-b8bce4c0c868
 - **Status:** ✅ Passed
 - **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
 ---
 
-#### Test TC002 post api analyze with missing url returns 400 error
-- **Test Code:** [TC002_post_api_analyze_with_missing_url_returns_400_error.py](./TC002_post_api_analyze_with_missing_url_returns_400_error.py)
-- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/005ceff7-c2ae-4a7d-83af-6f2a53e28d4a/d5e3ddd5-dc59-489c-bde8-264c0ac33859
+#### Test TC004 Error state clears spinner and shows red error box with prefix
+- **Test Code:** [TC004_Error_state_clears_spinner_and_shows_red_error_box_with_prefix.py](./TC004_Error_state_clears_spinner_and_shows_red_error_box_with_prefix.py)
+- **Test Error:** TEST FAILURE
+
+ASSERTIONS:
+- Analyze button not found on page
+- Unable to perform analysis: could not click Analyze to trigger spinner or error message
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/3c1f23ef-5155-4c13-b931-cfe168b00d87
+- **Status:** ❌ Failed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---
+
+#### Test TC006 Invalid URL shows validation error banner with details
+- **Test Code:** [TC006_Invalid_URL_shows_validation_error_banner_with_details.py](./TC006_Invalid_URL_shows_validation_error_banner_with_details.py)
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/fc6fc114-e837-4fbb-ab49-f85e2bffd350
 - **Status:** ✅ Passed
 - **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
 ---
 
-#### Test TC003 post api analyze with serpapi key missing returns partial results
-- **Test Code:** [TC003_post_api_analyze_with_serpapi_key_missing_returns_partial_results.py](./TC003_post_api_analyze_with_serpapi_key_missing_returns_partial_results.py)
-- **Test Error:** Traceback (most recent call last):
-  File "/var/task/handler.py", line 258, in run_with_retry
-    exec(code, exec_env)
-  File "<string>", line 86, in <module>
-  File "<string>", line 43, in test_post_api_analyze_with_serpapi_key_missing_returns_partial_results
-AssertionError: authorHistory.pattern missing fallback labels but expected one of {'No encontrado en Wikidata', 'No disponible'}
+#### Test TC007 Empty URL submission shows validation error banner
+- **Test Code:** [TC007_Empty_URL_submission_shows_validation_error_banner.py](./TC007_Empty_URL_submission_shows_validation_error_banner.py)
+- **Test Error:** TEST FAILURE
 
-- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/005ceff7-c2ae-4a7d-83af-6f2a53e28d4a/15a205fb-c4bf-4b78-8768-bfcc477e90e9
+ASSERTIONS:
+- Analyze button not exposed as an interactive element on the page; cannot click it to trigger validation.
+- Submitting the form with an empty URL (pressed Enter) did not display any 'Error:' text.
+- No red error box appeared after submitting an empty URL.
+- Validation message containing the word 'URL' was not visible on the page.
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/d114cdf2-17e3-46d1-a423-6990d0cecbbc
 - **Status:** ❌ Failed
 - **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
 ---
 
-#### Test TC004 post api analyze with wikidata sparql returning empty results
-- **Test Code:** [TC004_post_api_analyze_with_wikidata_sparql_returning_empty_results.py](./TC004_post_api_analyze_with_wikidata_sparql_returning_empty_results.py)
-- **Test Error:** Traceback (most recent call last):
-  File "/var/task/urllib3/connectionpool.py", line 534, in _make_request
-    response = conn.getresponse()
-               ^^^^^^^^^^^^^^^^^^
-  File "/var/task/urllib3/connection.py", line 565, in getresponse
-    httplib_response = super().getresponse()
-                       ^^^^^^^^^^^^^^^^^^^^^
-  File "/var/lang/lib/python3.12/http/client.py", line 1430, in getresponse
-    response.begin()
-  File "/var/lang/lib/python3.12/http/client.py", line 331, in begin
-    version, status, reason = self._read_status()
-                              ^^^^^^^^^^^^^^^^^^^
-  File "/var/lang/lib/python3.12/http/client.py", line 292, in _read_status
-    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/lang/lib/python3.12/socket.py", line 720, in readinto
-    return self._sock.recv_into(b)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-TimeoutError: timed out
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/var/task/requests/adapters.py", line 667, in send
-    resp = conn.urlopen(
-           ^^^^^^^^^^^^^
-  File "/var/task/urllib3/connectionpool.py", line 841, in urlopen
-    retries = retries.increment(
-              ^^^^^^^^^^^^^^^^^^
-  File "/var/task/urllib3/util/retry.py", line 474, in increment
-    raise reraise(type(error), error, _stacktrace)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/task/urllib3/util/util.py", line 39, in reraise
-    raise value
-  File "/var/task/urllib3/connectionpool.py", line 787, in urlopen
-    response = self._make_request(
-               ^^^^^^^^^^^^^^^^^^^
-  File "/var/task/urllib3/connectionpool.py", line 536, in _make_request
-    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
-  File "/var/task/urllib3/connectionpool.py", line 367, in _raise_timeout
-    raise ReadTimeoutError(
-urllib3.exceptions.ReadTimeoutError: HTTPConnectionPool(host='tun.testsprite.com', port=8080): Read timed out. (read timeout=30)
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/var/task/handler.py", line 258, in run_with_retry
-    exec(code, exec_env)
-  File "<string>", line 28, in <module>
-  File "<string>", line 14, in test_post_api_analyze_wikidata_sparql_empty_results
-  File "/var/task/requests/api.py", line 115, in post
-    return request("post", url, data=data, json=json, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/task/requests/api.py", line 59, in request
-    return session.request(method=method, url=url, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/task/requests/sessions.py", line 589, in request
-    resp = self.send(prep, **send_kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/task/requests/sessions.py", line 703, in send
-    r = adapter.send(request, **kwargs)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/task/requests/adapters.py", line 713, in send
-    raise ReadTimeout(e, request=request)
-requests.exceptions.ReadTimeout: HTTPConnectionPool(host='tun.testsprite.com', port=8080): Read timed out. (read timeout=30)
-
-- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/005ceff7-c2ae-4a7d-83af-6f2a53e28d4a/8f89adaa-1bc2-4671-843b-09e136b1b347
-- **Status:** ❌ Failed
-- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
----
-
-#### Test TC005 post api analyze with openrouter api key missing returns fallback strings
-- **Test Code:** [TC005_post_api_analyze_with_openrouter_api_key_missing_returns_fallback_strings.py](./TC005_post_api_analyze_with_openrouter_api_key_missing_returns_fallback_strings.py)
-- **Test Error:** Traceback (most recent call last):
-  File "/var/task/handler.py", line 258, in run_with_retry
-    exec(code, exec_env)
-  File "<string>", line 46, in <module>
-  File "<string>", line 35, in test_post_api_analyze_openrouter_key_missing_returns_fallback_strings
-AssertionError: contrast.analysis does not contain fallback string 'No disponible'
-
-- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/005ceff7-c2ae-4a7d-83af-6f2a53e28d4a/3aa9f33e-58a3-4e3a-8839-4a9d9cee6a1f
-- **Status:** ❌ Failed
-- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
----
-
-#### Test TC006 post api analyze with postlight parser fallback for client side rendered sites
-- **Test Code:** [TC006_post_api_analyze_with_postlight_parser_fallback_for_client_side_rendered_sites.py](./TC006_post_api_analyze_with_postlight_parser_fallback_for_client_side_rendered_sites.py)
-- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/005ceff7-c2ae-4a7d-83af-6f2a53e28d4a/201f87f0-589f-4347-9faa-1ae3ac198504
+#### Test TC010 Malformed URL format shows validation error banner
+- **Test Code:** [TC010_Malformed_URL_format_shows_validation_error_banner.py](./TC010_Malformed_URL_format_shows_validation_error_banner.py)
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/e9192e04-e6b6-48d4-8c4e-15c25c9c3dde
 - **Status:** ✅ Passed
 - **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
 ---
 
-#### Test TC007 post api analyze with duckduckgo sparse results for unknown authors
-- **Test Code:** [TC007_post_api_analyze_with_duckduckgo_sparse_results_for_unknown_authors.py](./TC007_post_api_analyze_with_duckduckgo_sparse_results_for_unknown_authors.py)
-- **Test Error:** Traceback (most recent call last):
-  File "/var/task/urllib3/connectionpool.py", line 534, in _make_request
-    response = conn.getresponse()
-               ^^^^^^^^^^^^^^^^^^
-  File "/var/task/urllib3/connection.py", line 565, in getresponse
-    httplib_response = super().getresponse()
-                       ^^^^^^^^^^^^^^^^^^^^^
-  File "/var/lang/lib/python3.12/http/client.py", line 1430, in getresponse
-    response.begin()
-  File "/var/lang/lib/python3.12/http/client.py", line 331, in begin
-    version, status, reason = self._read_status()
-                              ^^^^^^^^^^^^^^^^^^^
-  File "/var/lang/lib/python3.12/http/client.py", line 292, in _read_status
-    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/lang/lib/python3.12/socket.py", line 720, in readinto
-    return self._sock.recv_into(b)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-TimeoutError: timed out
+#### Test TC013 Summary Metrics Bar shows all three stat cards with numeric values after a successful analysis
+- **Test Code:** [TC013_Summary_Metrics_Bar_shows_all_three_stat_cards_with_numeric_values_after_a_successful_analysis.py](./TC013_Summary_Metrics_Bar_shows_all_three_stat_cards_with_numeric_values_after_a_successful_analysis.py)
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/299d01ef-6b34-4ea2-be48-0312a524c26e
+- **Status:** ✅ Passed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---
 
-The above exception was the direct cause of the following exception:
+#### Test TC014 Summary Metrics Bar displays Active alerts value after analysis completion
+- **Test Code:** [TC014_Summary_Metrics_Bar_displays_Active_alerts_value_after_analysis_completion.py](./TC014_Summary_Metrics_Bar_displays_Active_alerts_value_after_analysis_completion.py)
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/921194d3-0e48-4301-b82e-559a1faba692
+- **Status:** ✅ Passed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---
 
-Traceback (most recent call last):
-  File "/var/task/requests/adapters.py", line 667, in send
-    resp = conn.urlopen(
-           ^^^^^^^^^^^^^
-  File "/var/task/urllib3/connectionpool.py", line 841, in urlopen
-    retries = retries.increment(
-              ^^^^^^^^^^^^^^^^^^
-  File "/var/task/urllib3/util/retry.py", line 474, in increment
-    raise reraise(type(error), error, _stacktrace)
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/task/urllib3/util/util.py", line 39, in reraise
-    raise value
-  File "/var/task/urllib3/connectionpool.py", line 787, in urlopen
-    response = self._make_request(
-               ^^^^^^^^^^^^^^^^^^^
-  File "/var/task/urllib3/connectionpool.py", line 536, in _make_request
-    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
-  File "/var/task/urllib3/connectionpool.py", line 367, in _raise_timeout
-    raise ReadTimeoutError(
-urllib3.exceptions.ReadTimeoutError: HTTPConnectionPool(host='tun.testsprite.com', port=8080): Read timed out. (read timeout=30)
+#### Test TC015 Partial-data run shows at least one stat card with placeholder or Not available
+- **Test Code:** [TC015_Partial_data_run_shows_at_least_one_stat_card_with_placeholder_or_Not_available.py](./TC015_Partial_data_run_shows_at_least_one_stat_card_with_placeholder_or_Not_available.py)
+- **Test Error:** TEST FAILURE
 
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/var/task/handler.py", line 258, in run_with_retry
-    exec(code, exec_env)
-  File "<string>", line 37, in <module>
-  File "<string>", line 14, in test_post_api_analyze_duckduckgo_sparse_results_for_unknown_authors
-  File "/var/task/requests/api.py", line 115, in post
-    return request("post", url, data=data, json=json, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/task/requests/api.py", line 59, in request
-    return session.request(method=method, url=url, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/task/requests/sessions.py", line 589, in request
-    resp = self.send(prep, **send_kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/task/requests/sessions.py", line 703, in send
-    r = adapter.send(request, **kwargs)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/task/requests/adapters.py", line 713, in send
-    raise ReadTimeout(e, request=request)
-requests.exceptions.ReadTimeout: HTTPConnectionPool(host='tun.testsprite.com', port=8080): Read timed out. (read timeout=30)
-
-- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/005ceff7-c2ae-4a7d-83af-6f2a53e28d4a/a4bd254a-bd37-4b2f-b836-5e256b3ab22a
+ASSERTIONS:
+- 'Not available' text not found on the analysis results page after analysis completed.
+- No non-numeric placeholders (e.g., '-', '—', 'N/A') were found in stat cards; stat values are numeric: Ownership nodes: 3, Author articles: 76, Active alerts: 1.
+- The feature to display a placeholder 'Not available' for partial/missing stat data was not observed on the tested page.
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/2ec0f29b-97fb-404e-8e85-cddd8bff01c0
 - **Status:** ❌ Failed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---
+
+#### Test TC019 Layer 1 renders core fields after analyzing a valid article URL
+- **Test Code:** [TC019_Layer_1_renders_core_fields_after_analyzing_a_valid_article_URL.py](./TC019_Layer_1_renders_core_fields_after_analyzing_a_valid_article_URL.py)
+- **Test Error:** Test execution failed or timed out
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/12603f03-a841-40f3-9164-16186a578828
+- **Status:** ❌ Failed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---
+
+#### Test TC020 Layer 1 Domain value is displayed (non-empty)
+- **Test Code:** [TC020_Layer_1_Domain_value_is_displayed_non_empty.py](./TC020_Layer_1_Domain_value_is_displayed_non_empty.py)
+- **Test Error:** TEST FAILURE
+
+ASSERTIONS:
+- Analyze button not found on page or not available as an interactive element
+- Analysis could not be initiated because no clickable 'Analyze' control was available
+- Domain field value could not be verified because the analysis step could not be executed
+- Post-analysis UI elements (e.g., 'Domain' label/value) were not displayed after attempted analysis
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/c3f5be9d-4f3e-45f2-8d75-7421a1209a0d
+- **Status:** ❌ Failed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---
+
+#### Test TC021 Layer 1 Title value is displayed (matches article title text presence)
+- **Test Code:** [TC021_Layer_1_Title_value_is_displayed_matches_article_title_text_presence.py](./TC021_Layer_1_Title_value_is_displayed_matches_article_title_text_presence.py)
+- **Test Error:** TEST FAILURE
+
+ASSERTIONS:
+- Title field value is 'Unknown' instead of an extracted article title
+- No visible article title displayed in the Title field after analysis completed
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/2a84d21c-c93d-4dda-97c1-d98a0066168b
+- **Status:** ❌ Failed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---
+
+#### Test TC022 Layer 1 Ownership chain displays either arrow-separated values or 'Not found'
+- **Test Code:** [TC022_Layer_1_Ownership_chain_displays_either_arrow_separated_values_or_Not_found.py](./TC022_Layer_1_Ownership_chain_displays_either_arrow_separated_values_or_Not_found.py)
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/ad738d8b-8732-4e14-a640-78ab1cfde9d9
+- **Status:** ✅ Passed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---
+
+#### Test TC024 Layer 1 does not show MBFC badge area when MBFC is unavailable (omitted UI)
+- **Test Code:** [TC024_Layer_1_does_not_show_MBFC_badge_area_when_MBFC_is_unavailable_omitted_UI.py](./TC024_Layer_1_does_not_show_MBFC_badge_area_when_MBFC_is_unavailable_omitted_UI.py)
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/c2b12cea-cd65-4a76-ae6c-b578321b7d46
+- **Status:** ✅ Passed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---
+
+#### Test TC027 Author Panel renders for an article that includes author metadata
+- **Test Code:** [TC027_Author_Panel_renders_for_an_article_that_includes_author_metadata.py](./TC027_Author_Panel_renders_for_an_article_that_includes_author_metadata.py)
+- **Test Error:** TEST FAILURE
+
+ASSERTIONS:
+- Analysis failed - 'Error: Failed to fetch' message displayed on page
+- Author field not populated - extracted content explicitly states 'There are no populated author field values on the page.'
+- 'Coverage pattern' not found in page content after analysis
+- Final analysis results were not produced despite 'Analyzing...' indicator being visible earlier
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/5f2b6b1b-8f9a-442f-8846-7b180fbc93b8
+- **Status:** ❌ Failed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---
+
+#### Test TC030 Articles list renders with source labels for an authored article
+- **Test Code:** [TC030_Articles_list_renders_with_source_labels_for_an_authored_article.py](./TC030_Articles_list_renders_with_source_labels_for_an_authored_article.py)
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard/mcp/tests/87d73ccd-7f50-44bd-922d-d1f169340c2b/c75e4650-cd5e-44e3-9477-77f36c9b4b6d
+- **Status:** ✅ Passed
 - **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
 ---
 
 
 ## 3️⃣ Coverage & Matching Metrics
 
-- **42.86** of tests passed
+- **53.33** of tests passed
 
 | Requirement        | Total Tests | ✅ Passed | ❌ Failed  |
 |--------------------|-------------|-----------|------------|

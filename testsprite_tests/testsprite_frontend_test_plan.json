@@ -1,0 +1,2565 @@
+[
+  {
+    "id": "TC001",
+    "title": "Loading spinner and message appear after submitting a valid URL",
+    "description": "Verifies that submitting a valid article URL shows a visible spinning loader and descriptive loading message while analysis is running.",
+    "category": "Loading State",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Analyze\" button is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/sample-article\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"spinning loader icon\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"descriptive loading message\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Loading state persists briefly during long-running analysis",
+    "description": "Verifies that the loading spinner and message remain visible while waiting (no streaming) and do not immediately disappear after submit.",
+    "category": "Loading State",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/long-form-article\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"spinning loader icon\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"descriptive loading message\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Wait for 5 seconds"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"spinning loader icon\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Submitting via Enter key shows loading spinner and message",
+    "description": "Verifies that submitting the URL using the Enter key triggers the same loading UI as clicking Analyze.",
+    "category": "Loading State",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/submit-with-enter\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Press Enter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"spinning loader icon\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"descriptive loading message\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Error state clears spinner and shows red error box with prefix",
+    "description": "Verifies that when analysis fails, the spinner is cleared and a red error box with an \"Error:\" prefix is shown.",
+    "category": "Loading State",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/likely-to-fail\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"spinning loader icon\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the red error box to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Error:\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"spinning loader icon\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Loading message is visible during wait and replaced/removed after error",
+    "description": "Verifies that the descriptive loading message is shown while waiting and is not left stuck on screen after an error is displayed.",
+    "category": "Loading State",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/error-path\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"descriptive loading message\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the red error box to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Error:\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"descriptive loading message\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Invalid URL shows validation error banner with details",
+    "description": "Verifies that submitting an invalid URL displays a red error box with an \"Error:\" prefix and validation details.",
+    "category": "Error State",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Analyze\" button is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"not-a-url\" into the URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Error:\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"red error\" box is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"invalid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Empty URL submission shows validation error banner",
+    "description": "Verifies that submitting with an empty URL shows a red error box with an \"Error:\" prefix and a validation message.",
+    "category": "Error State",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Error:\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"red error\" box is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"URL\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Whitespace-only URL submission shows validation error banner",
+    "description": "Verifies that submitting a whitespace-only URL results in a visible error banner indicating a validation failure.",
+    "category": "Error State",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"   \" into the URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Error:\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"red error\" box is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"valid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Unsupported scheme (non-http/https) shows validation error banner",
+    "description": "Verifies that a URL with an unsupported scheme triggers a validation error displayed in the red error banner.",
+    "category": "Error State",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"ftp://example.com/article\" into the URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Error:\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"red error\" box is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"http\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Malformed URL format shows validation error banner",
+    "description": "Verifies that a malformed URL format triggers the red error box with an \"Error:\" prefix and a validation message.",
+    "category": "Error State",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://\" into the URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Error:\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"red error\" box is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"valid\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Error banner updates when resubmitting with another invalid URL",
+    "description": "Verifies that after an error is shown, submitting another invalid URL results in an error banner still visible and reflecting the latest validation messaging.",
+    "category": "Error State",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"bad\" into the URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Error:\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"still-not-a-url\" into the URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Error:\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Error banner is not visible on initial page load",
+    "description": "Verifies that the error state is not shown before any submission attempt.",
+    "category": "Error State",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"URL input\" field is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"red error\" box is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Summary Metrics Bar shows all three stat cards with numeric values after a successful analysis",
+    "description": "Verifies that after submitting a valid article URL and analysis completion, the Ownership nodes, Author articles, and Active alerts cards display numeric values.",
+    "category": "Summary Metrics Bar",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"article URL input\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://www.reuters.com/world/\" into the \"article URL\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"analysis loading spinner\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Ownership nodes\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Ownership nodes value\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Author articles value\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Summary Metrics Bar displays Active alerts value after analysis completion",
+    "description": "Verifies the Active alerts stat card appears and its value area is visible after analysis finishes.",
+    "category": "Summary Metrics Bar",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://apnews.com/\" into the \"article URL\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"analysis loading spinner\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Active alerts\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Active alerts value\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Ownership nodes\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author articles\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Partial-data run shows at least one stat card with placeholder or Not available",
+    "description": "Verifies that when analysis completes with partial data, one or more stat cards show a placeholder or \"Not available\" instead of a numeric value.",
+    "category": "Summary Metrics Bar",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://www.theguardian.com/international\" into the \"article URL\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"analysis loading spinner\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Ownership nodes\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author articles\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Active alerts\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Not available\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Submitting with an empty URL does not show Summary Metrics Bar values",
+    "description": "Verifies that without a submitted URL, the metrics bar does not present completed numeric values.",
+    "category": "Summary Metrics Bar",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"article URL input\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"analysis loading spinner\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Ownership nodes\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author articles\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Active alerts\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Submitting an obviously invalid URL does not produce metric cards",
+    "description": "Verifies that an invalid URL input does not lead to populated metrics cards being shown.",
+    "category": "Summary Metrics Bar",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"not a url\" into the \"article URL\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Not available\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Ownership nodes\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author articles\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Active alerts\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Metrics bar renders labels consistently after analysis completes",
+    "description": "Verifies that after a completed analysis the three metrics labels are visible and correctly named.",
+    "category": "Summary Metrics Bar",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://www.bbc.com/news\" into the \"article URL\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"analysis loading spinner\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Ownership nodes\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author articles\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Active alerts\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Summary Metrics Bar\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Layer 1 renders core fields after analyzing a valid article URL",
+    "description": "Verifies that Layer 1 panel appears with Media Outlet heading and core fields (Domain, Title, Ownership chain, Summary) after analysis completes.",
+    "category": "Layer 1 — Ownership Chain Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"article URL input\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://www.bbc.com/news/world-us-canada-68912345\" into \"article URL input\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"analysis loading spinner\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 1\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Media Outlet\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Domain\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Layer 1 Domain value is displayed (non-empty)",
+    "description": "Verifies that the Domain field is present and shows a visible value after analysis completes.",
+    "category": "Layer 1 — Ownership Chain Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://www.reuters.com/world/europe/example-article-2026-01-15/\" into \"article URL input\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 1\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Domain\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Domain field value\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Layer 1 Title value is displayed (matches article title text presence)",
+    "description": "Verifies that the Title field is present and shows a visible title value after analysis completes.",
+    "category": "Layer 1 — Ownership Chain Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://apnews.com/article/example-story-1234567890abcdef\" into \"article URL input\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 1\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Title\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Title field value\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Layer 1 Ownership chain displays either arrow-separated values or 'Not found'",
+    "description": "Verifies that the Ownership chain field is present and renders a visible value, allowing for fallback text.",
+    "category": "Layer 1 — Ownership Chain Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://www.nytimes.com/2026/02/01/us/politics/example.html\" into \"article URL input\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 1\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Ownership chain\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Ownership chain field value\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Layer 1 Summary field is visible after analysis completes",
+    "description": "Verifies that the Summary field appears in Layer 1 and displays visible summary content.",
+    "category": "Layer 1 — Ownership Chain Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://www.theguardian.com/world/2026/mar/01/example-article\" into \"article URL input\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 1\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Summary\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Summary field content\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Layer 1 does not show MBFC badge area when MBFC is unavailable (omitted UI)",
+    "description": "Verifies that no MBFC badge area is displayed when MBFC_API_KEY is not set or the domain is not indexed.",
+    "category": "Layer 1 — Ownership Chain Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/sample-article\" into \"article URL input\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 1\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Media Outlet\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"MBFC\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "Layer 1 input validation: submitting an empty URL does not start analysis",
+    "description": "Verifies the user cannot run analysis with an empty URL and that Layer 1 results are not displayed.",
+    "category": "Layer 1 — Ownership Chain Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"article URL input\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 1\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"analysis loading spinner\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "Layer 1 input validation: invalid URL format is rejected and results do not render",
+    "description": "Verifies that an obviously invalid URL does not proceed to analysis and Layer 1 panel does not appear.",
+    "category": "Layer 1 — Ownership Chain Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"not a url\" into \"article URL input\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 1\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"analysis loading spinner\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC027",
+    "title": "Author Panel renders for an article that includes author metadata",
+    "description": "Verifies Layer 2 appears after analysis and displays populated author details when author metadata exists.",
+    "category": "Layer 2 — Author Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article-with-author\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Loading\" or an analysis spinner is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 2\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Author\" field value is visible and is not empty"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Coverage pattern\" field is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC028",
+    "title": "Biography displays when present for an authored article",
+    "description": "Verifies the Biography field is shown and contains visible content when the provider returns a biography.",
+    "category": "Layer 2 — Author Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article-with-author-and-bio\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 2\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Biography\" section is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Biography\" section contains visible text"
+      }
+    ]
+  },
+  {
+    "id": "TC029",
+    "title": "Biography section gracefully handles missing biography for authored article",
+    "description": "Verifies the Author Panel does not break when biography is absent and shows an empty or not-available state.",
+    "category": "Layer 2 — Author Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article-with-author-no-bio\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 2\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Author\" field value is visible and is not empty"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Biography\" section is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Not available\" is visible in the \"Biography\" section"
+      }
+    ]
+  },
+  {
+    "id": "TC030",
+    "title": "Articles list renders with source labels for an authored article",
+    "description": "Verifies Layer 2 shows a non-empty article list and each entry displays a source label when available.",
+    "category": "Layer 2 — Author Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article-with-author-and-articles\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 2\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Articles\" list is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify at least one article entry is visible in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a source label is visible for an article entry"
+      }
+    ]
+  },
+  {
+    "id": "TC031",
+    "title": "Clicking an article link from the Author Panel is possible (link appears clickable)",
+    "description": "Verifies article links are present and can be activated from Layer 2 without breaking the app UI.",
+    "category": "Layer 2 — Author Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article-with-author-and-articles\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 2\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the \"Articles\" list in Layer 2"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an article link is visible in the list"
+      },
+      {
+        "type": "action",
+        "description": "Click the first visible article link"
+      }
+    ]
+  },
+  {
+    "id": "TC032",
+    "title": "Author Panel handles articles with no author metadata",
+    "description": "Verifies Layer 2 shows an explicit not-found/empty state when author metadata is missing.",
+    "category": "Layer 2 — Author Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article-without-author\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 2\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Not found\" is visible in the Author field area"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Not available\" is visible in the Biography area"
+      }
+    ]
+  },
+  {
+    "id": "TC033",
+    "title": "No-author article shows empty or not-available articles list state",
+    "description": "Verifies the articles section gracefully shows an empty list or not-available messaging when no author is detected.",
+    "category": "Layer 2 — Author Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article-without-author\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 2\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Articles\" list section is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Not available\" is visible in the Articles section"
+      }
+    ]
+  },
+  {
+    "id": "TC034",
+    "title": "Layer 2.5 renders after successful analysis with author root node visible",
+    "description": "Verifies the Author Coverage Map section appears after submitting a valid article URL and analysis completes.",
+    "category": "Layer 2.5 — Author Coverage Map",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"URL input field\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"analysis loading spinner\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author Coverage Map\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 2.5\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"author name root node\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC035",
+    "title": "Topic branches show article count badges in the topic tree",
+    "description": "Verifies topic branches and their article-count badges are visible within Layer 2.5 after analysis completes.",
+    "category": "Layer 2.5 — Author Coverage Map",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author Coverage Map\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"topic branch item\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"article count badge\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"topic branch item\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC036",
+    "title": "Expand a topic branch to reveal article links",
+    "description": "Verifies expanding a topic branch reveals article links under that branch.",
+    "category": "Layer 2.5 — Author Coverage Map",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author Coverage Map\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on a \"topic branch\" in the topic tree"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"article link under expanded topic branch\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"expanded topic branch\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC037",
+    "title": "Collapse an expanded topic branch hides article links",
+    "description": "Verifies collapsing the same topic branch hides its previously revealed article links.",
+    "category": "Layer 2.5 — Author Coverage Map",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author Coverage Map\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on a \"topic branch\" in the topic tree"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"article link under expanded topic branch\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on the same \"topic branch\" again"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"topic branch collapsed state\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC038",
+    "title": "Bar chart is visible with topic distribution alongside the topic tree",
+    "description": "Verifies the horizontal bar chart appears on the right and shows topic distribution values/bars after analysis completes.",
+    "category": "Layer 2.5 — Author Coverage Map",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author Coverage Map\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"topic distribution bar chart\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"bar in topic distribution chart\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"topic label in bar chart\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC039",
+    "title": "Layer 2.5 supports minimal/absent author coverage data with a clear empty state",
+    "description": "Verifies a clear message or empty state is shown when author coverage data is absent or minimal.",
+    "category": "Layer 2.5 — Author Coverage Map",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/minimal-author-coverage\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author Coverage Map\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 2.5\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"no coverage\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"empty topic tree\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC040",
+    "title": "Layer 2.5 remains visible and stable after toggling multiple branches",
+    "description": "Verifies repeated expand/collapse interactions do not remove the section and the UI remains usable.",
+    "category": "Layer 2.5 — Author Coverage Map",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author Coverage Map\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on a \"topic branch\" in the topic tree"
+      },
+      {
+        "type": "action",
+        "description": "Click on a different \"topic branch\" in the topic tree"
+      },
+      {
+        "type": "action",
+        "description": "Click on the first \"topic branch\" again"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"topic tree\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC041",
+    "title": "Layer 2.5 section is discoverable by scrolling after analysis completes",
+    "description": "Verifies the user can scroll to find the Layer 2.5 section and it is visible on the page.",
+    "category": "Layer 2.5 — Author Coverage Map",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to \"/\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"analysis loading spinner\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the \"Layer 2.5\" section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 2.5\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Author Coverage Map\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC042",
+    "title": "Layer 3 renders contrast paragraph after successful analysis",
+    "description": "Verifies that submitting a valid article URL produces a visible Layer 3 Contrast panel with a generated paragraph.",
+    "category": "Layer 3 — Contrast Analysis Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"URL\" input field is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/story\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Analyzing\" spinner or loading indicator is visible"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Layer 3\" tag to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Contrast\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Contrast analysis\" paragraph content is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC043",
+    "title": "Layer 3 heading and tag are present even if contrast content is unavailable",
+    "description": "Verifies that the Layer 3 Contrast section still renders with a fallback message when the LLM contrast result is not available.",
+    "category": "Layer 3 — Contrast Analysis Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/story\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Layer 3\" tag to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Contrast\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Not available\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC044",
+    "title": "Layer 3 appears after analysis completes (no premature Layer 3 content)",
+    "description": "Verifies that Layer 3 content is not shown before analysis completion and appears afterward.",
+    "category": "Layer 3 — Contrast Analysis Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/story\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Analyzing\" spinner or loading indicator is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 3\" is not visible"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Layer 3\" tag to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Contrast\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC045",
+    "title": "Layer 3 Contrast panel remains readable after scrolling",
+    "description": "Verifies the Layer 3 section is visible and readable when the user scrolls the results page.",
+    "category": "Layer 3 — Contrast Analysis Panel",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/story\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Layer 3\" tag to appear"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the \"Layer 3\" section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Contrast\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Contrast analysis\" paragraph content is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC046",
+    "title": "Re-running analysis updates Layer 3 content for a different URL",
+    "description": "Verifies that submitting a second URL replaces/updates the Layer 3 contrast output rather than leaving stale content.",
+    "category": "Layer 3 — Contrast Analysis Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/story\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Layer 3\" tag to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Contrast\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.org/another-story\" into the \"URL\" input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Layer 3\" tag to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Contrast\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC047",
+    "title": "Layer 4 renders divergence score, progress bar, interpretation, counts, and divergent sources for a valid article URL",
+    "description": "Verifies the Narrative Divergence panel shows a numeric score (0–100) with supporting UI and a populated divergent sources list after analysis completes.",
+    "category": "Layer 4 — Narrative Divergence Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/story\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the button to submit the article for analysis"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the analysis results to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 4\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Narrative Divergence\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a numeric divergence score is visible and looks like a value from 0 to 100"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the divergence progress bar is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC048",
+    "title": "Layer 4 shows interpretation text for a computed divergence score",
+    "description": "Verifies an interpretation/explanation is shown in the Narrative Divergence panel when a numeric score is available.",
+    "category": "Layer 4 — Narrative Divergence Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/another-story\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the button to submit the article for analysis"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the analysis results to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 4\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Narrative Divergence\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the interpretation text explaining the score range is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC049",
+    "title": "Layer 4 shows global and author snippet counts when analysis succeeds",
+    "description": "Verifies snippet count fields are visible in the Narrative Divergence panel after analysis completes.",
+    "category": "Layer 4 — Narrative Divergence Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/coverage\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the button to submit the article for analysis"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the analysis results to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 4\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Narrative Divergence\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the global snippet count is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the author snippet count is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC050",
+    "title": "Layer 4 lists most divergent sources with score badges and links when available",
+    "description": "Verifies the most divergent sources section displays at least one source row with a score badge and a visible link.",
+    "category": "Layer 4 — Narrative Divergence Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/politics\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the button to submit the article for analysis"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the analysis results to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 4\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Narrative Divergence\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the list of most divergent sources is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify at least one divergent source shows a score badge and a clickable link"
+      }
+    ]
+  },
+  {
+    "id": "TC051",
+    "title": "Layer 4 gracefully shows \"Not available\" when embeddings/divergence cannot be computed",
+    "description": "Verifies the panel renders with a \"Not available\" score and no divergent sources when the embeddings provider is unavailable or fails.",
+    "category": "Layer 4 — Narrative Divergence Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/embeddings-fail\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the button to submit the article for analysis"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the analysis results to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 4\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Narrative Divergence\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Not available\" is visible for the divergence score"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the divergent sources list is empty or no divergent sources are shown"
+      }
+    ]
+  },
+  {
+    "id": "TC052",
+    "title": "Submitting an invalid URL does not show Layer 4 Narrative Divergence results",
+    "description": "Verifies that an invalid URL submission does not produce the Narrative Divergence panel results (analysis should not complete successfully).",
+    "category": "Layer 4 — Narrative Divergence Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"not-a-url\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the button to submit the article for analysis"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Narrative Divergence\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Layer 4\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC053",
+    "title": "Bias Alerts panel renders with at least one alert after analyzing a valid URL",
+    "description": "Verifies that the Alerts section appears after analysis and shows one or more alerts with severity, code, and message.",
+    "category": "Layer 5 — Bias Alerts Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Loading\" or an analysis spinner is visible"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Bias Alerts Detected\" heading to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Alerts\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Bias Alerts Detected\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify at least one alert item is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC054",
+    "title": "Each displayed alert includes a severity badge label (HIGH/MEDIUM/LOW)",
+    "description": "Verifies that any alert shown includes a visible severity badge label.",
+    "category": "Layer 5 — Bias Alerts Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Bias Alerts Detected\" heading to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify at least one of the texts \"HIGH\", \"MEDIUM\", or \"LOW\" is visible within an alert severity badge"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an alert item is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the severity badge is visible within the alert item"
+      }
+    ]
+  },
+  {
+    "id": "TC055",
+    "title": "Alert code text is visible for an alert item",
+    "description": "Verifies that an alert code label/text is displayed for at least one alert.",
+    "category": "Layer 5 — Bias Alerts Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Bias Alerts Detected\" heading to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify at least one alert item is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Alert code\" (or equivalent code label/value text within an alert) is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC056",
+    "title": "Alert message text is visible for an alert item",
+    "description": "Verifies that a human-readable alert message is displayed for at least one alert.",
+    "category": "Layer 5 — Bias Alerts Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Bias Alerts Detected\" heading to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify at least one alert item is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Alert message\" (or equivalent message text within an alert) is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC057",
+    "title": "No-alerts scenario shows Alerts section with an empty state message or empty list",
+    "description": "Verifies that when no deterministic rules fire, the Alerts section still appears and indicates no alerts.",
+    "category": "Layer 5 — Bias Alerts Panel",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/neutral-article\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Bias Alerts Detected\" heading to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Alerts\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Bias Alerts Detected\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text indicating no alerts detected is visible, or verify that no alert items are visible"
+      }
+    ]
+  },
+  {
+    "id": "TC058",
+    "title": "Alerts panel remains visible after scrolling through results",
+    "description": "Verifies the Alerts section can be reached and remains readable when the user scrolls results.",
+    "category": "Layer 5 — Bias Alerts Panel",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Bias Alerts Detected\" heading to appear"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the \"Bias Alerts Detected\" heading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Bias Alerts Detected\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the alerts list area is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC059",
+    "title": "Re-running analysis refreshes the Alerts content for a different URL",
+    "description": "Verifies that submitting a second URL updates the Alerts panel content (alerts present vs no alerts).",
+    "category": "Layer 5 — Bias Alerts Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Bias Alerts Detected\" heading to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the Alerts section is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/neutral-article\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Bias Alerts Detected\" heading to appear"
+      }
+    ]
+  },
+  {
+    "id": "TC060",
+    "title": "Alerts section is not shown before running analysis",
+    "description": "Verifies that the Bias Alerts panel is not prematurely displayed on initial load before submission.",
+    "category": "Layer 5 — Bias Alerts Panel",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Bias Alerts Detected\" is not visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Alerts\" is not visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com/news/article\" into the article URL input field"
+      },
+      {
+        "type": "action",
+        "description": "Click the \"Analyze\" or \"Submit\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the \"Bias Alerts Detected\" heading to appear"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Bias Alerts Detected\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC061",
+    "title": "Raw JSON Inspector is collapsed by default after a successful analysis",
+    "description": "Verifies the Raw JSON section appears after analysis and is collapsed by default.",
+    "category": "Raw JSON Inspector",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com\" into the article URL field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Loading\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Raw JSON\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Raw JSON\" JSON content area is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC062",
+    "title": "Expand Raw JSON to view JSON in a scrollable preformatted block",
+    "description": "Verifies expanding Raw JSON reveals JSON content displayed in a preformatted block.",
+    "category": "Raw JSON Inspector",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com\" into the article URL field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Raw JSON\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Raw JSON\" summary"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Raw JSON\" JSON content area is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"{\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC063",
+    "title": "Collapse Raw JSON after expanding hides the JSON content",
+    "description": "Verifies the Raw JSON section can be collapsed again after expansion.",
+    "category": "Raw JSON Inspector",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com\" into the article URL field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Raw JSON\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Raw JSON\" summary"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Raw JSON\" JSON content area is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Raw JSON\" summary"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Raw JSON\" JSON content area is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC064",
+    "title": "Raw JSON remains available and expandable after a long analysis wait",
+    "description": "Verifies the Raw JSON inspector is still usable when analysis takes longer and the user waits for completion.",
+    "category": "Raw JSON Inspector",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com\" into the article URL field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for element \"Raw JSON\" to appear"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Raw JSON\" summary"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Raw JSON\" JSON content area is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"}\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC065",
+    "title": "Raw JSON inspector displays empty arrays/object placeholders when integrations return no data",
+    "description": "Verifies the Raw JSON output can show empty arrays and placeholder objects without breaking the inspector UI.",
+    "category": "Raw JSON Inspector",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com\" into the article URL field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for element \"Raw JSON\" to appear"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Raw JSON\" summary"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"[]\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"{}\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC066",
+    "title": "Raw JSON summary remains visible and clickable after toggling multiple times",
+    "description": "Verifies the Raw JSON inspector remains stable and interactive after repeated expand/collapse toggles.",
+    "category": "Raw JSON Inspector",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"https://example.com\" into the article URL field"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Analyze\" button"
+      },
+      {
+        "type": "action",
+        "description": "Wait for element \"Raw JSON\" to appear"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Raw JSON\" summary"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Raw JSON\" summary"
+      },
+      {
+        "type": "action",
+        "description": "Click on the \"Raw JSON\" summary"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Raw JSON\" JSON content area is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC067",
+    "title": "Header displays HUGINN branding and Live Analysis badge on initial load",
+    "description": "Verifies the sticky header shows the HUGINN title/subtitle and the \"Live Analysis\" badge on the home route.",
+    "category": "Header and Footer",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"HUGINN\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"header\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Live Analysis\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"footer\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC068",
+    "title": "Footer content and external links are visible after scrolling",
+    "description": "Verifies the footer is reachable via scroll and shows copyright text plus GitHub and X links.",
+    "category": "Header and Footer",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the bottom of the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"footer\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"GitHub\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"X\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Twitter\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC069",
+    "title": "Sticky header remains visible after scrolling down the page",
+    "description": "Verifies the header stays visible when the user scrolls away from the top (sticky behavior validated via visibility).",
+    "category": "Header and Footer",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"header\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the bottom of the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"header\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"HUGINN\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC070",
+    "title": "GitHub link is present and can be clicked from the footer",
+    "description": "Verifies the GitHub link is visible in the footer and can be clicked without breaking the app UI flow.",
+    "category": "Header and Footer",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the bottom of the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"GitHub\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"GitHub\" link in the footer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"github\""
+      }
+    ]
+  },
+  {
+    "id": "TC071",
+    "title": "X link is present and can be clicked from the footer",
+    "description": "Verifies the X (Twitter) link is visible in the footer and initiates navigation to an external site.",
+    "category": "Header and Footer",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the bottom of the page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"X\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"X\" link in the footer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"x.com\""
+      }
+    ]
+  }
+]

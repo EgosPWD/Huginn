@@ -1,70 +1,181 @@
 version: "2"
-type: backend
+type: frontend
 tech_stack:
   - language: TypeScript
   - framework: Next.js 16 App Router
-  - runtime: Node.js / Bun
-  - http_client: fetch (native)
-  - other: Postlight Parser, SerpApi, Wikidata SPARQL, DuckDuckGo Instant Answer API, OpenRouter LLM
+  - ui_library: Tailwind CSS 4
+  - other: Geist fonts, Bun runtime
+routes:
+  - path: /
+    file: src/app/page.tsx
+    auth_required: false
+    description: Single-page app — URL input form and full analysis results
 features:
-  - name: Media Analysis API
-    description: Analyzes a news article URL and returns a 3-layer media intelligence report covering ownership chain, author history, and AI-generated contrast analysis
+  - name: URL Input Form
+    description: Input field and Analyze button for submitting a news article URL
     files:
-      - src/app/api/analyze/route.ts
-      - src/lib/parser.ts
-      - src/lib/serpapi.ts
-      - src/lib/wikidata.ts
-      - src/lib/duckduckgo.ts
-      - src/lib/openrouter.ts
-      - src/types/analysis.ts
-    endpoints:
-      - method: POST
-        path: /api/analyze
-        description: Receives a news article URL and returns ownership chain (Wikidata), author history (SerpApi + DuckDuckGo), and contrast analysis (OpenRouter LLM)
-        auth_required: false
-        request_schema:
-          body:
-            url: string
-        response_schema:
-          "200":
-            article:
-              title: string
-              author: string
-              domain: string
-              content: string
-            ownership:
-              chain: string[]
-              summary: string
-            authorHistory:
-              bio: string
-              articles: NewsResult[]
-              pattern: string
-            contrast:
-              analysis: string
-            raw:
-              globalContext: NewsResult[]
-              authorContext: NewsResult[]
-          "400": '{ error: string }'
-          "500": '{ error: string }'
-    depends_on:
-      - Postlight Parser (external npm package)
-      - SerpApi Google News (SERPAPI_KEY env var)
-      - Wikidata SPARQL public endpoint
-      - DuckDuckGo Instant Answer API (no key)
-      - OpenRouter API (OPENROUTER_API_KEY env var)
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See URL input field with placeholder text
+      - Type a URL into the input field
+      - See Analyze button disabled when input is empty
+      - See Analyze button enabled when input has text
+      - Click Analyze button to submit
+      - See Analyze button show "Analyzing..." and be disabled while loading
+    api_calls: []
+    auth_required: false
+
+  - name: Loading State
+    description: Spinner and status message shown while analysis is running
+    files:
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See spinning loader icon appear after submitting
+      - See descriptive loading message text
+    api_calls: []
+    auth_required: false
+
+  - name: Error State
+    description: Red error banner shown when URL is invalid or analysis fails
+    files:
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See red error box appear with "Error:" prefix
+      - See specific error message text
+    api_calls: []
+    auth_required: false
+
+  - name: Summary Metrics Bar
+    description: Three stat cards showing counts after analysis completes
+    files:
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See "Ownership nodes" card with numeric value
+      - See "Author articles" card with numeric value
+      - See "Active alerts" card with numeric value
+    api_calls: []
+    auth_required: false
+
+  - name: Layer 1 — Ownership Chain Panel
+    description: Shows domain, title, ownership chain, summary, and optional MBFC badges
+    files:
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See "Layer 1" tag and "Media Outlet" heading
+      - See Domain field with value
+      - See Title field with article title
+      - See Ownership chain field (arrow-separated or "Not found")
+      - See Summary field
+      - See MBFC badges if available (Bias, Factual, Credibility)
+    api_calls: []
+    auth_required: false
+
+  - name: Layer 2 — Author Panel
+    description: Shows author name, biography, coverage pattern, and article list
+    files:
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See "Layer 2" tag and "Author" heading
+      - See Author field
+      - See Biography field if present
+      - See Coverage pattern field
+      - See articles list with source labels and clickable links
+    api_calls: []
+    auth_required: false
+
+  - name: Layer 2.5 — Author Coverage Map
+    description: Collapsible topic tree with branch expand/collapse and bar chart
+    files:
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See "Layer 2.5" tag and "Author Coverage Map" heading
+      - See author name root node
+      - See topic branches with article count badges
+      - Click a topic branch to expand it and reveal article links
+      - Click the same branch again to collapse it
+      - See bar chart with topic distribution on the right
+    api_calls: []
+    auth_required: false
+
+  - name: Layer 3 — Contrast Analysis Panel
+    description: AI-generated contrast paragraph
+    files:
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See "Layer 3" tag and "Contrast" heading
+      - See contrast analysis paragraph text
+    api_calls: []
+    auth_required: false
+
+  - name: Layer 4 — Narrative Divergence Panel
+    description: Score, progress bar, interpretation, and divergent sources list
+    files:
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See "Layer 4" tag and "Narrative Divergence" heading
+      - See numeric score or "Not available" message
+      - See color-coded progress bar
+      - See interpretation text
+      - See global and author snippet counts
+      - See list of most divergent sources with score badges and links
+    api_calls: []
+    auth_required: false
+
+  - name: Layer 5 — Bias Alerts Panel
+    description: Alert list with HIGH/MEDIUM/LOW severity badges
+    files:
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See "Alerts" tag and "Bias Alerts Detected" heading
+      - See each alert with a colored severity badge (HIGH/MEDIUM/LOW)
+      - See alert code text
+      - See alert message text
+    api_calls: []
+    auth_required: false
+
+  - name: Raw JSON Inspector
+    description: Collapsible details element with full JSON response
+    files:
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See "Raw JSON" summary text collapsed by default
+      - Click to expand and see JSON in scrollable pre block
+      - Click again to collapse
+    api_calls: []
+    auth_required: false
+
+  - name: Header and Footer
+    description: Sticky header with HUGINN branding and footer with GitHub and X links
+    files:
+      - src/app/_components/AnalyzerForm.tsx
+    entry_route: /
+    user_interactions:
+      - See HUGINN title and subtitle in sticky header
+      - See "Live Analysis" badge in header
+      - See footer with copyright text
+      - See GitHub link in footer
+      - See X / Twitter link in footer
+    api_calls: []
+    auth_required: false
+
 known_limitations:
-  - issue: Postlight Parser fails to extract title/author from sites using client-side rendering (e.g. CNN); OG meta fallback is used
-    location: src/lib/parser.ts
-    impact: Author and title may fall back to OG meta tags instead of article body
-  - issue: Wikidata SPARQL may not find lesser-known media outlets
-    location: src/lib/wikidata.ts
-    impact: Ownership chain returns empty with "No encontrado en Wikidata"
-  - issue: SerpApi returns 401 when SERPAPI_KEY is not set
-    location: src/lib/serpapi.ts
-    impact: authorContext and globalContext will be empty arrays; DuckDuckGo still runs as fallback
-  - issue: OpenRouter returns fallback strings when OPENROUTER_API_KEY is not set or model fails
-    location: src/lib/openrouter.ts
-    impact: contrast.analysis, authorHistory.pattern, and ownership.summary from LLM will show "No disponible"
-  - issue: DuckDuckGo RelatedTopics may return sparse results for authors without Wikipedia pages
-    location: src/lib/duckduckgo.ts
-    impact: authorHistory.bio will be empty string and articles list may be short
+  - issue: MBFC badges only appear when MBFC_API_KEY is set and domain is indexed
+    location: src/lib/mbfc.ts
+    impact: Layer 1 shows no MBFC badges for unlisted outlets or missing key
+  - issue: Divergence score shows "Not available" when GOOGLE_AI_API_KEY is missing
+    location: src/lib/embeddings.ts
+    impact: Layer 4 score section is replaced with a plain text message
+  - issue: Analysis takes 10-30 seconds with no streaming
+    location: src/app/api/analyze/route.ts
+    impact: User sees spinner until all external calls complete

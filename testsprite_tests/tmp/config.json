@@ -1,19 +1,18 @@
 {
   "status": "commited",
-  "type": "backend",
+  "type": "frontend",
   "scope": "codebase",
   "localEndpoint": "http://localhost:3000",
-  "backendAuthType": "public",
   "executionArgs": {
     "projectName": "huginn",
     "projectPath": "/home/ego/dev/projects/huginn",
     "testIds": [],
-    "additionalInstruction": "The response from POST /api/analyze now includes an `alerts` field (array of Alert objects). Each alert has: level (\"HIGH\" | \"MEDIUM\" | \"LOW\"), code (\"CONFLICT_OF_INTEREST\" | \"NARRATIVE_ISOLATION\" | \"MEDIA_CONCENTRATION\"), and message (string). \n\nCritical test cases to cover:\n1. `alerts` field is present in the response and is an array\n2. Alerts are sorted HIGH → MEDIUM → LOW (never reversed)\n3. When narrativeDivergence.score is exactly 70, NARRATIVE_ISOLATION alert must NOT appear (rule is strictly > 70)\n4. When narrativeDivergence.score is 71, NARRATIVE_ISOLATION alert MUST appear\n5. When narrativeDivergence.score is null (embeddings unavailable), NARRATIVE_ISOLATION alert must NOT appear\n6. When alerts array is empty, response still returns alerts: []\n7. Each alert object has exactly the shape: { level, code, message }",
+    "additionalInstruction": "Run ALL tests at these 5 viewport sizes: 375px (mobile), 414px (mobile large), 768px (tablet), 1280px (desktop), 1920px (wide). For each test, verify: no horizontal overflow, header stays visible and readable, form input and button are accessible, result panels stack correctly on mobile and go side-by-side on desktop, MBFC badges wrap properly, topic tree is scrollable on small screens, Layer 4 bar fits within viewport. Flag any layout breakage, text overflow, or elements hidden behind other elements.",
     "serverMode": "development",
     "envs": {
       "API_KEY": "sk-user-7kM98aho7n48-KbBLEGSYzIojwKUVlEFXiFpa0lZCn-NUUFS_mI1DE40GSxvB_jpCj9ROnJ-IYvJBHq8gtOQACQVF_7ia348QoJKd-PvmcxQAihrJ-IaFshJgJxALU9xSW4"
     }
   },
-  "serverPort": 44051,
-  "proxy": "http://b4b1be46-db69-4060-be78-b26db378b125:84JynFDkDbmNwMcAnJlUws9rRHH5RJUw@tun.testsprite.com:8080"
+  "serverPort": 33463,
+  "proxy": "http://f8b790bb-1320-4ac4-bd58-677add689b3f:BNYRG4zli3sOIB7VXLjSohPMoqtoVcgC@tun.testsprite.com:8080"
 }
