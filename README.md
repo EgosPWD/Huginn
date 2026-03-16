@@ -6,10 +6,6 @@ Paste a news article URL and Huginn tells you who owns the outlet, what the auth
 
 ![Huginn screenshot](imagen.png)
 
-<a href="https://drive.google.com/file/d/1MsL-4yB47KQyH7dpNrT098-adZAugS1-/view?usp=sharing">
-  <img src="imagen.png" alt="Demo video — click to watch" />
-</a>
-
 **[▶ Watch Demo Video](https://drive.google.com/file/d/1MsL-4yB47KQyH7dpNrT098-adZAugS1-/view?usp=sharing)**
 
 ## What it does
