@@ -33,6 +33,10 @@ async function searchNews(query: string, num: number): Promise<NewsResult[]> {
   }));
 }
 
+export async function searchAuthorByName(author: string): Promise<NewsResult[]> {
+  return searchNews(`"${author}"`, 30);
+}
+
 export async function searchDual(
   title: string,
   author: string,

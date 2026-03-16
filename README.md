@@ -1,16 +1,27 @@
 # Huginn — Media Intelligence
 
-Paste a news article URL and Huginn tells you who owns the outlet, what the author has covered before, how an AI reads the relationship between the two — and now, how far the author's narrative deviates from the global consensus, measured mathematically via vector embeddings.
+Paste a news article URL and Huginn tells you who owns the outlet, what the author has covered before, how their narrative deviates from the global consensus — and raises automated bias alerts when conflict-of-interest signals are detected.
 
 ## What it does
 
-Four layers of analysis, in order:
+Six layers of analysis, in order:
 
 **Layer 1 — The Outlet**
-Who owns the media company that published the article. Ownership chain traversed up to 3 levels via Wikidata SPARQL (e.g. CNN → Warner Bros. Discovery).
+Who owns the media company that published the article. Ownership chain traversed up to 3 levels via Wikidata SPARQL (e.g. CNN → Warner Bros. Discovery). Enriched with DuckDuckGo abstracts for the outlet and the ultimate owner.
 
 **Layer 2 — The Author**
 Author biography and coverage history pulled from DuckDuckGo Instant Answer API and SerpApi Google News. Shows patterns in how the author has covered similar topics.
+
+**Layer 2.5 — Author Coverage Map**
+A dedicated SerpApi search (`"${author}"`, 30 results) runs in parallel with the rest of the pipeline. Results are merged and deduplicated against Layer 2 articles, then classified into topic buckets (Nuclear Policy, Iran, Russia/Ukraine, National Security, etc.) using keyword matching. Displayed as an interactive collapsible tree with a horizontal bar chart showing topic distribution.
+
+```
+[David E. Sanger]
+ ├──► [National Security]    (8 articles)  ← click to expand
+ ├──► [Iran]                 (6 articles)
+ ├──► [Russia / Ukraine]     (4 articles)
+ └──► [Nuclear Policy]       (3 articles)
+```
 
 **Layer 3 — The Contrast**
 AI-generated analysis (via OpenRouter + Llama 3.3 70B) that connects the ownership chain, the author's history, and the current article's framing.
@@ -37,6 +48,17 @@ Score ranges:
 | 61–80 | High narrative divergence — clearly differentiated perspective |
 | 81–100 | Isolated narrative — author diverges significantly from the global consensus |
 
+**Layer 5 — Bias Alerts**
+Three deterministic rules (no AI) that fire independently of the LLM:
+
+| Code | Level | Trigger |
+|------|-------|---------|
+| `CONFLICT_OF_INTEREST` | HIGH | Author has no articles that mention the outlet's owner with critical language |
+| `NARRATIVE_ISOLATION` | MEDIUM | Divergence score strictly > 70 |
+| `MEDIA_CONCENTRATION` | LOW | Owner's bio mentions 3+ known media brands |
+
+Alerts are sorted HIGH → MEDIUM → LOW. If no rule fires, `alerts` is an empty array.
+
 ## Stack
 
 | Layer | Tech |
@@ -52,6 +74,8 @@ Score ranges:
 | AI analysis | OpenRouter → `meta-llama/llama-3.3-70b-instruct` |
 | Embeddings | Google Gemini API → `gemini-embedding-001` (3072 dims) |
 | Vector math | Custom pure functions (centroid, cosine similarity) |
+| Topic classification | Keyword matching (10 buckets, no external call) |
+| Bias detection | Deterministic rule engine (3 rules, no external call) |
 
 ## Project structure
 
@@ -59,25 +83,26 @@ Score ranges:
 src/
 ├── app/
 │   ├── _components/
-│   │   └── AnalyzerForm.tsx   # Client component — URL input + 4-layer results UI
+│   │   └── AnalyzerForm.tsx   # Client component — URL input + full results UI
 │   ├── api/
 │   │   └── analyze/
-│   │       └── route.ts       # POST /api/analyze — main pipeline
+│   │       └── route.ts       # POST /api/analyze — main pipeline orchestrator
 │   ├── layout.tsx
 │   └── page.tsx
 ├── lib/
 │   ├── parser.ts              # Postlight Parser wrapper + OG meta fallback
-│   ├── serpapi.ts             # SerpApi Google News (global context + author history)
-│   ├── wikidata.ts            # SPARQL ownership chain traversal
-│   ├── duckduckgo.ts          # DuckDuckGo Instant Answer (author bio + articles)
-│   ├── openrouter.ts          # LLM report generation
+│   ├── serpapi.ts             # SerpApi: global context (20), author+domain (10), author by name (30)
+│   ├── wikidata.ts            # SPARQL ownership chain traversal (up to 3 levels)
+│   ├── duckduckgo.ts          # DDG Instant Answer: author bio, outlet bio, topic context
+│   ├── openrouter.ts          # LLM report generation (ownership summary + contrast analysis)
 │   ├── embeddings.ts          # Gemini embedding API calls (per-snippet, indexed)
 │   ├── vector-math.ts         # centroid(), cosineSimilarity(), divergenceScore()
 │   ├── interpret.ts           # Score → human-readable interpretation
+│   ├── topic-extractor.ts     # Keyword-based article → topic bucket classifier
+│   ├── bias-alerts.ts         # Deterministic rule engine → Alert[]
 │   └── utils.ts               # cn() + fetchWithTimeout()
 └── types/
     └── analysis.ts            # All TypeScript interfaces
-testsprite_tests/              # AI-generated backend test cases (TestSprite)
 ```
 
 ## API
@@ -116,7 +141,7 @@ testsprite_tests/              # AI-generated backend test cases (TestSprite)
     "score": 19.9,
     "interpretation": "Author aligns with the global consensus on this topic",
     "globalSnippetsCount": 2,
-    "authorSnippetsCount": 42,
+    "authorSnippetsCount": 2,
     "divergentSources": [
       {
         "title": "string",
@@ -127,6 +152,20 @@ testsprite_tests/              # AI-generated backend test cases (TestSprite)
       }
     ]
   },
+  "authorTopicMap": {
+    "totalArticles": 34,
+    "topics": [
+      { "topic": "National Security", "count": 8, "articles": [] },
+      { "topic": "Iran", "count": 6, "articles": [] }
+    ]
+  },
+  "alerts": [
+    {
+      "level": "HIGH",
+      "code": "CONFLICT_OF_INTEREST",
+      "message": "The author has never criticized the outlet's owner"
+    }
+  ],
   "raw": {
     "globalContext": [],
     "authorContext": [],
@@ -151,25 +190,38 @@ URL
 Postlight Parser ──────────────────────► title, author, domain, content
  │                                        (OG meta fallback if blocked)
  ▼
-Promise.all ────────────────────────────► 4 parallel calls:
+Promise.all ────────────────────────────► 5 parallel calls:
  ├── Wikidata SPARQL                        ownership chain (up to 3 levels)
- ├── SerpApi Google News (×2)               global context (20) + author history (10)
- ├── DuckDuckGo author                      author bio + articles
+ ├── SerpApi Google News ×2                 global context (20) + author+domain (10)
+ ├── SerpApi Google News ×1                 dedicated author search — "author name" (30)
+ ├── DuckDuckGo author                      bio + articles (4 parallel queries)
  └── DuckDuckGo topic                       broader topic context
  │
  ▼
-DDG outlet enrichment ─────────────────► outlet bio + owner bio (sequential, needs Wikidata)
+DDG outlet enrichment ─────────────────► outlet bio + owner bio (sequential, needs Wikidata result)
  │
  ▼
-Gemini Embeddings ──── Promise.all ────► embed globalContext snippets
- │                                        embed authorContext snippets (indexed)
+Dedup + merge ─────────────────────────► all author articles unified, no duplicate URLs
+ │
+ ▼
+Topic extraction ───────────────────────► keyword match → authorTopicMap (10 buckets, sorted by count)
+ │
+ ▼
+Gemini Embeddings ──── Promise.all ────► embed globalContext snippets (2)
+ │                                        embed authorContext snippets (2, indexed)
  ├── centroid(globalEmbeds)
  ├── centroid(authorEmbeds)
- ├── divergenceScore = (1 - cosineSimilarity) × 100
+ ├── divergenceScore = (1 − cosineSimilarity) × 100
  └── top-5 author articles by distance from globalCentroid
  │
  ▼
-OpenRouter / Llama 3.3 70B ─────────────► contrast analysis JSON
+OpenRouter / Llama 3.3 70B ─────────────► ownership summary + author pattern + contrast analysis
+ │
+ ▼
+Bias alert rules ───────────────────────► 0–3 alerts (deterministic, no AI):
+ ├── CONFLICT_OF_INTEREST (HIGH)   — author never criticized owner
+ ├── NARRATIVE_ISOLATION (MEDIUM)  — divergence score > 70
+ └── MEDIA_CONCENTRATION (LOW)     — owner controls 3+ outlets
 ```
 
 Every external call has a timeout. If any integration fails, the pipeline continues with graceful degradation — the endpoint always returns 200 with whatever data is available.
@@ -217,8 +269,10 @@ Open [http://localhost:3000](http://localhost:3000).
 | Integration | Failure behavior |
 |-------------|-----------------|
 | Postlight Parser | Falls back to OG meta tag extraction |
-| SerpApi (401 / timeout) | Returns empty arrays, pipeline continues |
+| SerpApi (401 / timeout) | Returns `[]`, pipeline continues |
 | Wikidata (no result / timeout) | Returns `{ chain: [], summary: "Not found" }` |
 | DuckDuckGo (timeout) | Returns empty bio and articles |
-| OpenRouter (401 / timeout / empty response) | Returns `"Not available"` strings for all LLM fields |
-| Gemini Embeddings (no key / timeout / all fail) | Returns `{ score: null, divergentSources: [] }` — never returns false 100.0 |
+| OpenRouter (401 / timeout / empty response) | Returns `"Not available"` for all LLM fields |
+| Gemini Embeddings (no key / timeout) | Returns `{ score: null, divergentSources: [] }` — never returns a false 100.0 |
+| Topic extraction | Pure function, no external call — cannot fail |
+| Bias alert rules | Pure function, no external call — returns `[]` if no rules fire |

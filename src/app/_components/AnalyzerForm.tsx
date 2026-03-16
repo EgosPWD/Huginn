@@ -2,7 +2,7 @@
 
 import { type FormEvent, type ReactNode, useState } from "react";
 import { cn } from "@/lib/utils";
-import type { AnalysisResponse } from "@/types/analysis";
+import type { AnalysisResponse, AuthorTopicMap } from "@/types/analysis";
 
 const STATUS = {
   IDLE: "idle",
@@ -252,6 +252,23 @@ export function AnalyzerForm() {
                 {result.contrast.analysis}
               </p>
             </Section>
+
+            {result.authorTopicMap.topics.length > 0 && (
+              <div className="rounded-xl border border-amber-400/20 bg-amber-950/10 p-5 backdrop-blur lg:col-span-3">
+                <div className="mb-4 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-md border border-amber-300/30 bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-200">
+                      Layer 2.5
+                    </span>
+                    <h2 className="font-semibold text-white">Author Coverage Map</h2>
+                  </div>
+                  <span className="text-xs text-zinc-500">
+                    {result.authorTopicMap.totalArticles} articles · {result.authorTopicMap.topics.length} topics
+                  </span>
+                </div>
+                <AuthorTopicTree author={result.article.author} topicMap={result.authorTopicMap} />
+              </div>
+            )}
 
             <div className="rounded-xl border border-violet-400/20 bg-violet-950/10 p-5 backdrop-blur lg:col-span-3">
               <div className="mb-4 flex items-center gap-2">
@@ -511,6 +528,129 @@ function Field({ label, value }: FieldProps) {
         {label}
       </p>
       <p className="mt-0.5 text-sm text-zinc-200">{value || "-"}</p>
+    </div>
+  );
+}
+
+// --- Author Topic Tree ---
+
+interface AuthorTopicTreeProps {
+  author: string;
+  topicMap: AuthorTopicMap;
+}
+
+function AuthorTopicTree({ author, topicMap }: AuthorTopicTreeProps) {
+  const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set());
+
+  function toggleTopic(topic: string) {
+    setExpandedTopics((prev) => {
+      const next = new Set(prev);
+      if (next.has(topic)) next.delete(topic);
+      else next.add(topic);
+      return next;
+    });
+  }
+
+  const topics = topicMap.topics.filter((t) => t.count > 0);
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-2">
+      {/* Left — tree visualization */}
+      <div className="font-mono text-xs">
+        {/* Root node */}
+        <div className="mb-3 inline-flex items-center gap-2 rounded-lg border border-amber-400/30 bg-amber-500/10 px-3 py-2">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-amber-400">Author</span>
+          <span className="text-sm font-semibold text-amber-100">{author || "Unknown"}</span>
+        </div>
+
+        {/* Branches */}
+        <ul className="space-y-0.5 pl-1">
+          {topics.map((topic, i) => {
+            const isLast = i === topics.length - 1;
+            const isExpanded = expandedTopics.has(topic.topic);
+            const connector = isLast ? "└──►" : "├──►";
+
+            return (
+              <li key={topic.topic}>
+                <button
+                  onClick={() => toggleTopic(topic.topic)}
+                  className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-zinc-800/50"
+                >
+                  <span className="shrink-0 select-none text-zinc-600">{connector}</span>
+                  <span className="min-w-0 flex-1 truncate font-medium text-zinc-200 group-hover:text-amber-200">
+                    {topic.topic}
+                  </span>
+                  <span className="shrink-0 rounded-full bg-zinc-800 px-2 py-0.5 tabular-nums text-[10px] text-zinc-400">
+                    {topic.count}
+                  </span>
+                  <span className="shrink-0 text-[10px] text-zinc-600">
+                    {isExpanded ? "▲" : "▼"}
+                  </span>
+                </button>
+
+                {isExpanded && (
+                  <ul className="mb-1 ml-9 space-y-1 border-l border-zinc-800 py-1 pl-3">
+                    {topic.articles.slice(0, 6).map((article, j) => (
+                      <li key={j} className="flex items-start gap-1.5">
+                        <span className="mt-0.5 shrink-0 select-none text-zinc-700">
+                          {j === topic.articles.slice(0, 6).length - 1 ? "└─" : "├─"}
+                        </span>
+                        <div className="min-w-0">
+                          <span className="text-zinc-600">[{article.source || "?"}]</span>{" "}
+                          {article.link ? (
+                            <a
+                              href={article.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="break-words text-zinc-300 hover:text-amber-300 hover:underline"
+                            >
+                              {article.title}
+                            </a>
+                          ) : (
+                            <span className="text-zinc-300">{article.title}</span>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                    {topic.articles.length > 6 && (
+                      <li className="pl-4 text-zinc-600">+{topic.articles.length - 6} more</li>
+                    )}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {/* Right — horizontal bar chart */}
+      <div className="flex flex-col justify-center gap-2">
+        <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+          Topic distribution
+        </p>
+        {topics.slice(0, 8).map((topic) => {
+          const pct = Math.round((topic.count / topicMap.totalArticles) * 100);
+          const barWidth = Math.max(4, Math.round((topic.count / (topics[0]?.count ?? 1)) * 100));
+          return (
+            <div key={topic.topic} className="flex items-center gap-3">
+              <span className="w-36 shrink-0 truncate text-right text-xs text-zinc-400">
+                {topic.topic}
+              </span>
+              <div className="flex flex-1 items-center gap-2">
+                <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-zinc-800">
+                  <div
+                    className="h-full rounded-full bg-amber-500/70 transition-all duration-500"
+                    style={{ width: `${barWidth}%` }}
+                  />
+                </div>
+                <span className="w-8 shrink-0 text-right tabular-nums text-xs text-zinc-500">
+                  {pct}%
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

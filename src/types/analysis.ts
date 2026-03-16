@@ -33,6 +33,19 @@ export interface AuthorHistory {
   pattern: string;
 }
 
+// --- Author topic map (SerpApi dedicated author search) ---
+
+export interface AuthorTopic {
+  topic: string;
+  count: number;
+  articles: NewsResult[];
+}
+
+export interface AuthorTopicMap {
+  topics: AuthorTopic[];
+  totalArticles: number;
+}
+
 // --- DuckDuckGo Instant Answer API ---
 
 export interface DDGRelatedTopic {
@@ -115,6 +128,7 @@ export interface AnalysisResponse {
   narrativeDivergence: NarrativeDivergence;
   alerts: Alert[];
   raw: RawContext;
+  authorTopicMap: AuthorTopicMap;
 }
 
 // --- API request ---

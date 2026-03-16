@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parseArticle } from "@/lib/parser";
-import { searchDual } from "@/lib/serpapi";
+import { searchDual, searchAuthorByName } from "@/lib/serpapi";
+import { extractTopics } from "@/lib/topic-extractor";
 import { buildOwnershipChain } from "@/lib/wikidata";
 import { generateReport } from "@/lib/openrouter";
 import {
@@ -43,12 +44,13 @@ export async function POST(request: NextRequest) {
     //   SerpApi (global context + author articles)
     //   DDG author (bio + 4 queries)
     //   DDG topic (article topic context, SerpApi fallback)
-    const [wikidataChain, { globalContext, authorContext }, ddgAuthor, topicContext] =
+    const [wikidataChain, { globalContext, authorContext }, ddgAuthor, topicContext, authorByNameResults] =
       await Promise.all([
         buildOwnershipChain(article.domain),
         searchDual(article.title, article.author, article.domain),
         searchAuthorDDG(article.author, article.domain),
         searchTopicDDG(article.title),
+        searchAuthorByName(article.author),
       ]);
 
     // Step 3 — DDG outlet enrichment (needs owner name from Wikidata)
@@ -72,6 +74,14 @@ export async function POST(request: NextRequest) {
       ...authorContext,
       ...ddgAuthor.articles.filter((a) => !seenUrls.has(a.link)),
     ];
+
+    // Build author topic map — merge in dedicated author search, dedup
+    const topicArticlesSeen = new Set(mergedAuthorArticles.map((a) => a.link).filter(Boolean));
+    const topicArticles = [
+      ...mergedAuthorArticles,
+      ...authorByNameResults.filter((a) => a.link && !topicArticlesSeen.has(a.link)),
+    ];
+    const authorTopicMap = extractTopics(topicArticles);
 
     // Step 4 — Narrative Divergence Score (embeddings in parallel)
     // 2 each = 4 calls total — minimum viable for centroid comparison
@@ -164,6 +174,7 @@ export async function POST(request: NextRequest) {
       narrativeDivergence,
       alerts: generateAlerts({ article, ownership, authorHistory, contrast, narrativeDivergence, alerts: [], raw }),
       raw,
+      authorTopicMap,
     };
 
     return NextResponse.json(response);
