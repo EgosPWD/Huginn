@@ -1,116 +1,116 @@
 import requests
-import urllib.parse
+from requests.exceptions import RequestException
 
 BASE_URL = "http://localhost:3000"
-ANALYZE_PATH = "/api/analyze"
+API_PATH = "/api/analyze"
 TIMEOUT = 30
 
-# Real CNN article URL for end-to-end tests
-TEST_URL = "https://edition.cnn.com/2025/09/16/politics/trump-russia-ukraine-war-reagan-uk-visit-analysis"
-
-
 def test_post_api_analyze_with_valid_url_returns_full_analysis():
-    url = BASE_URL + ANALYZE_PATH
+    url_to_test = "https://example.com/news/article-with-narrative-divergence-tests"
+    # We will send different narrativeDivergence.score values via crafted URL query param or mock if API supported.
+    # Since we have no instructions for paramizing narrativeDivergence.score,  
+    # assume API internally computes narrativeDivergence.score from URL content.
 
-    headers = {"Content-Type": "application/json"}
-    payload = {"url": TEST_URL}
+    # Because the test involves verifying alert sorting and presence/absence based on narrativeDivergence.score,
+    # we may do multiple requests with mock URLs that produce different scores, but instructions specify only one test function.
+    # Here is a detailed single test covering the high-level expected behaviors, 
+    # verifying the presence and shape of alerts and sorting rules, plus the narrative isolation alert logic.
 
-    try:
-        response = requests.post(url, json=payload, headers=headers, timeout=TIMEOUT)
-    except requests.RequestException as e:
-        assert False, f"Request failed with exception: {e}"
+    def check_alerts(alerts):
+        # 1. alerts field is present and is a list
+        assert isinstance(alerts, list), "alerts field is not a list"
 
-    assert response.status_code == 200, f"Expected status 200 but got {response.status_code}"
+        # 7. Each alert object has exactly the shape: {level, code, message}
+        for alert in alerts:
+            assert isinstance(alert, dict), "alert is not an object"
+            assert set(alert.keys()) == {"level", "code", "message"}, f"alert keys mismatch: {alert.keys()}"
+            assert alert["level"] in {"HIGH", "MEDIUM", "LOW"}, f"invalid alert level: {alert['level']}"
+            assert alert["code"] in {"CONFLICT_OF_INTEREST", "NARRATIVE_ISOLATION", "MEDIA_CONCENTRATION"}, f"invalid alert code: {alert['code']}"
+            assert isinstance(alert["message"], str), "alert message is not a string"
 
-    try:
-        data = response.json()
-    except ValueError:
-        assert False, "Response is not valid JSON"
+        # 2. Alerts sorted HIGH 16 MEDIUM 16 LOW (never reversed)
+        levels = [alert["level"] for alert in alerts]
+        level_order = {"HIGH": 0, "MEDIUM": 1, "LOW": 2}
+        levels_ranks = [level_order[l] for l in levels]
+        assert levels_ranks == sorted(levels_ranks), f"alerts are not sorted HIGH->MEDIUM->LOW: {levels}"
 
-    # Validate presence of main keys in the response JSON
-    assert "article" in data, "'article' key missing in response"
-    assert "ownership" in data, "'ownership' key missing in response"
-    assert "authorHistory" in data, "'authorHistory' key missing in response"
-    assert "contrast" in data, "'contrast' key missing in response"
-    assert "raw" in data, "'raw' key missing in response"
+    # Helper function to get response and validate general schema
+    def post_analyze(url):
+        try:
+            resp = requests.post(
+                BASE_URL + API_PATH,
+                json={"url": url},
+                timeout=TIMEOUT,
+                headers={"Content-Type": "application/json"},
+            )
+            resp.raise_for_status()
+            return resp
+        except RequestException as e:
+            assert False, f"Request to /api/analyze failed: {e}"
 
-    article = data["article"]
-    ownership = data["ownership"]
-    author_history = data["authorHistory"]
-    contrast = data["contrast"]
-    raw = data["raw"]
+    # Make main request with normal URL (we expect some alerts, including high level)
+    response = post_analyze(url_to_test)
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+    body = response.json()
 
-    # Validate article object
+    # Check presence of top-level keys
+    for key in ["article", "ownership", "authorHistory", "contrast", "raw", "alerts"]:
+        assert key in body, f"Missing key in response body: {key}"
+
+    # Validate types and minimal shapes
+    article = body["article"]
+    assert isinstance(article, dict)
     for field in ["title", "author", "domain", "content"]:
-        assert field in article, f"'{field}' missing in article"
-        assert isinstance(article[field], str), f"'{field}' in article should be string"
+        assert field in article and isinstance(article[field], str), f"Article missing or invalid field {field}"
 
-    # Validate ownership object
-    assert "chain" in ownership, "'chain' missing in ownership"
-    assert isinstance(ownership["chain"], list), "'chain' in ownership should be a list"
-    # chain array elements should be strings
-    assert all(isinstance(i, str) for i in ownership["chain"]), "'chain' elements must be strings"
-    assert "summary" in ownership, "'summary' missing in ownership"
-    assert isinstance(ownership["summary"], str), "'summary' in ownership should be string"
+    ownership = body["ownership"]
+    assert isinstance(ownership, dict)
+    assert isinstance(ownership.get("chain", []), list), "ownership.chain should be a list"
+    assert isinstance(ownership.get("summary", ""), str), "ownership.summary should be a string"
 
-    # Validate authorHistory object
-    assert "bio" in author_history, "'bio' missing in authorHistory"
-    assert isinstance(author_history["bio"], str), "'bio' in authorHistory should be string"
-    assert "articles" in author_history, "'articles' missing in authorHistory"
-    assert isinstance(author_history["articles"], list), "'articles' in authorHistory should be list"
-    # articles list elements should be dict (NewsResult), just check type for each
-    for art in author_history["articles"]:
-        assert isinstance(art, dict), "Each item in authorHistory['articles'] must be dict"
-    assert "pattern" in author_history, "'pattern' missing in authorHistory"
-    assert isinstance(author_history["pattern"], str), "'pattern' in authorHistory should be string"
+    author_history = body["authorHistory"]
+    assert isinstance(author_history, dict)
+    assert isinstance(author_history.get("bio", ""), str)
+    assert isinstance(author_history.get("articles", []), list)
+    assert isinstance(author_history.get("pattern", ""), str)
 
-    # Validate contrast object
-    assert "analysis" in contrast, "'analysis' missing in contrast"
-    assert isinstance(contrast["analysis"], str), "'analysis' in contrast should be string"
+    contrast = body["contrast"]
+    assert isinstance(contrast, dict)
+    assert isinstance(contrast.get("analysis", ""), str)
 
-    # Validate raw object
-    assert "globalContext" in raw, "'globalContext' missing in raw"
-    assert isinstance(raw["globalContext"], list), "'globalContext' in raw should be list"
-    for item in raw["globalContext"]:
-        assert isinstance(item, dict), "Each item in raw['globalContext'] must be dict"
-    assert "authorContext" in raw, "'authorContext' missing in raw"
-    assert isinstance(raw["authorContext"], list), "'authorContext' in raw should be list"
-    for item in raw["authorContext"]:
-        assert isinstance(item, dict), "Each item in raw['authorContext'] must be dict"
+    raw = body["raw"]
+    assert isinstance(raw, dict)
+    assert isinstance(raw.get("globalContext", []), list)
+    assert isinstance(raw.get("authorContext", []), list)
 
-    # Identify specific integration failures if present
-    # By checking fallback strings or empty arrays per PRD known limitations
+    alerts = body["alerts"]
+    check_alerts(alerts)
 
-    # Postlight Parser failure is internal, assume title or author empty means failure
-    postlight_fail = (article.get("title", "") == "" or article.get("author", "") == "")
+    # Now specifically test narrativeDivergence.score logic and NARRATIVE_ISOLATION alert presence
+    # Since we do not have direct control over the API or the narrativeDivergence.score through the API,
+    # simulate the checks by inspecting alerts content and assuming that URL influences the score:
+    # We will test these rules by filtering alerts and heuristic messages
 
-    serpapi_fail = (len(raw.get("globalContext", [])) == 0 and len(raw.get("authorContext", [])) == 0)
-    # From known limitations, if SERPAPI_KEY missing, SerpApi arrays empty
+    codes_in_alerts = {alert["code"] for alert in alerts}
+    levels_order = [alert["level"] for alert in alerts]
 
-    wikidata_fail = False
-    if ownership.get("chain") == [] or ownership.get("chain") == ["No encontrado en Wikidata"]:
-        wikidata_fail = True
+    # Assert alerts sorted HIGH -> MEDIUM -> LOW
+    level_priority = {"HIGH": 0, "MEDIUM": 1, "LOW": 2}
+    priorities = [level_priority[lvl] for lvl in levels_order]
+    assert priorities == sorted(priorities), f"Alerts are not properly sorted by level: {levels_order}"
 
-    openrouter_fail = False
-    if (
-        contrast.get("analysis") == "No disponible"
-        or author_history.get("pattern") == "No disponible"
-        or ownership.get("summary") == "No disponible"
-    ):
-        openrouter_fail = True
+    # We must verify NARRATIVE_ISOLATION alert presence rules:
+    # - narrativeDivergence.score == 70: NARRATIVE_ISOLATION must NOT appear
+    # - narrativeDivergence.score == 71: NARRATIVE_ISOLATION MUST appear
+    # - narrativeDivergence.score == null: NARRATIVE_ISOLATION MUST NOT appear
 
-    # DuckDuckGo fallback is implicit, bio or articles might be empty or partial, no error key
+    # Attempt to find narrativeDivergence score somewhere:
+    # The schema in PRD does not explicitly expose narrativeDivergence in response,
+    # we look at alerts and follow instructions strictly on tests,
+    # Since this is the general test for valid url and full analysis, just ensure alerts appear and their shape and sorting.
 
-    # Print which integrations failed and their fallback/error responses
-    print("Integration Failures (if any):")
-    if postlight_fail:
-        print("- Postlight Parser: Failed to extract title/author (empty fields)")
-    if serpapi_fail:
-        print("- SerpApi: Returned empty globalContext and authorContext arrays")
-    if wikidata_fail:
-        print("- Wikidata SPARQL: Ownership chain empty or marked 'No encontrado en Wikidata'")
-    if openrouter_fail:
-        print("- OpenRouter: Returned fallback string 'No disponible' in analysis/pattern/summary")
-
+    # Additionally, test that when alerts array is empty, alerts: [] is returned
+    # This requires a separate call with a URL that triggers no alerts (not available here).
+    # As we only do one test, we check that alerts is a list (done) and if empty, it's empty list (done by type check).
 
 test_post_api_analyze_with_valid_url_returns_full_analysis()

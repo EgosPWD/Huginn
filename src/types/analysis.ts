@@ -94,6 +94,17 @@ export interface NarrativeDivergence {
   divergentSources: DivergentSource[];
 }
 
+// --- Bias Alerts ---
+
+export type AlertLevel = "HIGH" | "MEDIUM" | "LOW";
+export type AlertCode = "CONFLICT_OF_INTEREST" | "NARRATIVE_ISOLATION" | "MEDIA_CONCENTRATION";
+
+export interface Alert {
+  level: AlertLevel;
+  code: AlertCode;
+  message: string;
+}
+
 // --- Full analysis response ---
 
 export interface AnalysisResponse {
@@ -102,6 +113,7 @@ export interface AnalysisResponse {
   authorHistory: AuthorHistory;
   contrast: Contrast;
   narrativeDivergence: NarrativeDivergence;
+  alerts: Alert[];
   raw: RawContext;
 }
 

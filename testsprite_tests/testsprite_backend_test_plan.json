@@ -7,31 +7,31 @@
   {
     "id": "TC002",
     "title": "post api analyze with missing url returns 400 error",
-    "description": "Test POST /api/analyze with an empty or missing url field in the request body. Verify that the response status is 400 and the response body contains an error message indicating that the url is required."
+    "description": "Test POST /api/analyze with missing or empty request body. Verify that the server returns a 400 status code with an error message indicating that the url is required."
   },
   {
     "id": "TC003",
-    "title": "post api analyze handles serpapi key missing with graceful degradation",
-    "description": "Test POST /api/analyze when the SERPAPI_KEY environment variable is not set or invalid. Verify that the API returns partial results with empty globalContext and authorContext arrays, uses DuckDuckGo as fallback for author history, and does not break the pipeline."
+    "title": "post api analyze with serpapi key missing returns partial results",
+    "description": "Test POST /api/analyze when the SERPAPI_KEY environment variable is not set. Verify that the response returns partial results with empty globalContext and authorContext arrays, and that DuckDuckGo fallback is used to enrich author history. Confirm that the response status is 200 and missing data fields are explicitly labeled."
   },
   {
     "id": "TC004",
-    "title": "post api analyze handles wikidata sparql empty results gracefully",
-    "description": "Test POST /api/analyze when the Wikidata SPARQL query returns empty or no ownership data. Verify that the ownership chain is returned as an empty array or with an explicit fallback owner string 'No encontrado en Wikidata' and the pipeline continues without error."
+    "title": "post api analyze with wikidata sparql returning empty results",
+    "description": "Test POST /api/analyze when the Wikidata SPARQL query returns empty results for the ownership chain. Verify that the ownership chain field is either an empty array or contains an explicit fallback string such as 'No encontrado en Wikidata'. Confirm the response status is 200."
   },
   {
     "id": "TC005",
-    "title": "post api analyze handles openrouter api key missing with fallback strings",
-    "description": "Test POST /api/analyze when the OPENROUTER_API_KEY is missing or the OpenRouter model fails. Verify that the contrast analysis, author pattern, and ownership summary fields contain the fallback string 'No disponible' and the response is still 200 with partial data."
+    "title": "post api analyze with openrouter api key missing returns fallback strings",
+    "description": "Test POST /api/analyze when the OPENROUTER_API_KEY environment variable is not set or the OpenRouter model fails. Verify that the contrast analysis, author history pattern, and ownership summary fields contain fallback strings like 'No disponible'. Confirm the response status is 200 with partial analysis."
   },
   {
     "id": "TC006",
-    "title": "post api analyze handles postlight parser partial extraction with og meta fallback",
-    "description": "Test POST /api/analyze with a URL from a client-side rendered site where Postlight Parser fails to extract title or author. Verify that the server falls back to reading OG meta tags or returns empty strings for title and author, continues subsequent calls, and returns 200 with partial article fields."
+    "title": "post api analyze with postlight parser fallback for client side rendered sites",
+    "description": "Test POST /api/analyze with a URL from a client-side rendered site where Postlight Parser fails to extract author and title. Verify that the server falls back to reading OG meta tags or returns empty strings for author and title. Confirm that the pipeline continues and returns a 200 response with partial article metadata."
   },
   {
     "id": "TC007",
-    "title": "post api analyze returns 500 on unexpected server error",
-    "description": "Test POST /api/analyze with inputs or conditions that cause an unexpected server error. Verify that the response status is 500 and the response body contains an error message."
+    "title": "post api analyze with duckduckgo sparse results for unknown authors",
+    "description": "Test POST /api/analyze with an author that has no Wikipedia page or limited DuckDuckGo related topics. Verify that the authorHistory.bio is an empty string and the articles list is short or empty. Confirm the response status is 200 and the pipeline degrades gracefully."
   }
 ]

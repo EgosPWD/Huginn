@@ -11,6 +11,7 @@ import {
 import { getEmbeddings, getEmbeddingsIndexed } from "@/lib/embeddings";
 import { centroid, cosineSimilarity, divergenceScore } from "@/lib/vector-math";
 import { interpretDivergence } from "@/lib/interpret";
+import { generateAlerts } from "@/lib/bias-alerts";
 import type { AnalysisResponse, AnalyzeRequest, NarrativeDivergence } from "@/types/analysis";
 
 export async function POST(request: NextRequest) {
@@ -139,24 +140,29 @@ export async function POST(request: NextRequest) {
       topicContext,
     );
 
+    const authorHistory = {
+      bio: ddgAuthor.bio,
+      articles: mergedAuthorArticles,
+      pattern: report.authorPattern,
+    };
+
+    const contrast = { analysis: report.contrastAnalysis };
+
+    const raw = {
+      globalContext,
+      authorContext,
+      topicContext,
+      outletContext: ddgOutlet.articles,
+    };
+
     const response: AnalysisResponse = {
       article,
       ownership,
-      authorHistory: {
-        bio: ddgAuthor.bio,
-        articles: mergedAuthorArticles,
-        pattern: report.authorPattern,
-      },
-      contrast: {
-        analysis: report.contrastAnalysis,
-      },
+      authorHistory,
+      contrast,
       narrativeDivergence,
-      raw: {
-        globalContext,
-        authorContext,
-        topicContext,
-        outletContext: ddgOutlet.articles,
-      },
+      alerts: generateAlerts({ article, ownership, authorHistory, contrast, narrativeDivergence, alerts: [], raw }),
+      raw,
     };
 
     return NextResponse.json(response);

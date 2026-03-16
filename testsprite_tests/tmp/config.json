@@ -8,12 +8,12 @@
     "projectName": "huginn",
     "projectPath": "/home/ego/dev/projects/huginn",
     "testIds": [],
-    "additionalInstruction": "Test each API integration separately: Postlight Parser, SerpApi, Wikidata SPARQL, DuckDuckGo, and OpenRouter. Use a real CNN article URL like https://edition.cnn.com/2025/09/16/politics/trump-russia-ukraine-war-reagan-uk-visit-analysis for end-to-end tests. Identify which specific integrations fail and what error they return.",
+    "additionalInstruction": "The response from POST /api/analyze now includes an `alerts` field (array of Alert objects). Each alert has: level (\"HIGH\" | \"MEDIUM\" | \"LOW\"), code (\"CONFLICT_OF_INTEREST\" | \"NARRATIVE_ISOLATION\" | \"MEDIA_CONCENTRATION\"), and message (string). \n\nCritical test cases to cover:\n1. `alerts` field is present in the response and is an array\n2. Alerts are sorted HIGH → MEDIUM → LOW (never reversed)\n3. When narrativeDivergence.score is exactly 70, NARRATIVE_ISOLATION alert must NOT appear (rule is strictly > 70)\n4. When narrativeDivergence.score is 71, NARRATIVE_ISOLATION alert MUST appear\n5. When narrativeDivergence.score is null (embeddings unavailable), NARRATIVE_ISOLATION alert must NOT appear\n6. When alerts array is empty, response still returns alerts: []\n7. Each alert object has exactly the shape: { level, code, message }",
     "serverMode": "development",
     "envs": {
-      "API_KEY": "[REDACTED]"
+      "API_KEY": "sk-user-7kM98aho7n48-KbBLEGSYzIojwKUVlEFXiFpa0lZCn-NUUFS_mI1DE40GSxvB_jpCj9ROnJ-IYvJBHq8gtOQACQVF_7ia348QoJKd-PvmcxQAihrJ-IaFshJgJxALU9xSW4"
     }
   },
-  "serverPort": 39023,
-  "proxy": "[REDACTED]"
+  "serverPort": 44051,
+  "proxy": "http://b4b1be46-db69-4060-be78-b26db378b125:84JynFDkDbmNwMcAnJlUws9rRHH5RJUw@tun.testsprite.com:8080"
 }

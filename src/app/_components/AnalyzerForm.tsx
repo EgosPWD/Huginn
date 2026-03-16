@@ -278,6 +278,47 @@ export function AnalyzerForm() {
               )}
             </div>
 
+            {result.alerts.length > 0 && (
+              <div className="rounded-xl border border-amber-400/20 bg-amber-950/10 p-5 backdrop-blur lg:col-span-3">
+                <div className="mb-4 flex items-center gap-2">
+                  <span className="rounded-md border border-amber-300/30 bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-200">
+                    ⚠ Alerts
+                  </span>
+                  <h2 className="font-semibold text-white">Bias Alerts Detected</h2>
+                </div>
+                <ul className="space-y-3">
+                  {result.alerts.map((alert, i) => (
+                    <li
+                      key={i}
+                      className={cn(
+                        "flex items-start gap-3 rounded-lg border px-4 py-3",
+                        alert.level === "HIGH" && "border-red-800/50 bg-red-950/30",
+                        alert.level === "MEDIUM" && "border-amber-800/50 bg-amber-950/30",
+                        alert.level === "LOW" && "border-blue-800/50 bg-blue-950/30",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "shrink-0 rounded px-1.5 py-0.5 text-xs font-bold",
+                          alert.level === "HIGH" && "bg-red-500/20 text-red-300",
+                          alert.level === "MEDIUM" && "bg-amber-500/20 text-amber-300",
+                          alert.level === "LOW" && "bg-blue-500/20 text-blue-300",
+                        )}
+                      >
+                        {alert.level}
+                      </span>
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                          {alert.code.replaceAll("_", " ")}
+                        </p>
+                        <p className="mt-0.5 text-sm text-zinc-200">{alert.message}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <details className="rounded-xl border border-white/10 bg-zinc-950/60 lg:col-span-3">
               <summary className="cursor-pointer px-4 py-3 text-xs font-medium text-zinc-500 hover:text-zinc-300">
                 Raw JSON
