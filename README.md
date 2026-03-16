@@ -1,5 +1,7 @@
 # Huginn — Media Intelligence
 
+**Live:** [huginn.info](https://huginn.info)
+
 Paste a news article URL and Huginn tells you who owns the outlet, what the author has covered before, how their narrative deviates from the global consensus — and raises automated bias alerts when conflict-of-interest signals are detected.
 
 ## What it does
@@ -24,7 +26,7 @@ A dedicated SerpApi search (`"${author}"`, 30 results) runs in parallel with the
 ```
 
 **Layer 3 — The Contrast**
-AI-generated analysis (via OpenRouter + Llama 3.3 70B) that connects the ownership chain, the author's history, and the current article's framing.
+AI-generated analysis (via OpenRouter → `openrouter/free`) that connects the ownership chain, the author's history, and the current article's framing.
 
 **Layer 4 — Narrative Divergence Score**
 A vector-based measurement of how far the author's body of work deviates from the global news consensus on the same topic.
@@ -71,7 +73,7 @@ Alerts are sorted HIGH → MEDIUM → LOW. If no rule fires, `alerts` is an empt
 | News search | SerpApi Google News |
 | Author bio | DuckDuckGo Instant Answer API (no key) |
 | Ownership data | Wikidata SPARQL (public endpoint, no key) |
-| AI analysis | OpenRouter → `meta-llama/llama-3.3-70b-instruct` |
+| AI analysis | OpenRouter → `openrouter/free` (routes to best available free model) |
 | Embeddings | Google Gemini API → `gemini-embedding-001` (3072 dims) |
 | Vector math | Custom pure functions (centroid, cosine similarity) |
 | Topic classification | Keyword matching (10 buckets, no external call) |
