@@ -4,6 +4,10 @@
 
 Paste a news article URL and Huginn tells you who owns the outlet, what the author has covered before, how their narrative deviates from the global consensus — and raises automated bias alerts when conflict-of-interest signals are detected.
 
+![Huginn screenshot](imagen.png)
+
+<video src="demo.mp4" controls width="100%"></video>
+
 ## What it does
 
 Six layers of analysis, in order:
