@@ -58,7 +58,7 @@ export function AnalyzerForm() {
       </div>
 
       <header className="relative border-b border-white/10 px-6 py-5">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between">
+        <div className="anim-fade-in mx-auto flex w-full max-w-6xl items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold tracking-[0.16em] text-zinc-100">
               HUGINN
@@ -74,12 +74,17 @@ export function AnalyzerForm() {
       </header>
 
       <main className="relative mx-auto w-full max-w-6xl flex-1 px-6 py-10">
-        <section className="rounded-2xl border border-white/10 bg-zinc-950/70 p-6 shadow-[0_0_0_1px_rgba(16,185,129,0.08),0_28px_80px_rgba(0,0,0,0.55)] backdrop-blur">
-          <h2 className="text-3xl font-semibold tracking-tight text-zinc-100">
-            Advanced Media Intelligence
+        <section className="anim-fade-in-up rounded-2xl border border-white/10 bg-zinc-950/70 p-6 shadow-[0_0_0_1px_rgba(16,185,129,0.08),0_28px_80px_rgba(0,0,0,0.55)] backdrop-blur">
+          <span className="inline-flex rounded-full border border-cyan-300/30 bg-cyan-500/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-cyan-200">
+            Powered by OpenRouter, Wikidata, and SerpApi
+          </span>
+          <h2 className="mt-5 text-4xl font-semibold leading-tight tracking-tight text-zinc-100 sm:text-5xl">
+            Media Intelligence,
+            <br className="hidden sm:block" />
+            Unmasked.
           </h2>
-          <p className="mt-2 max-w-2xl text-sm text-zinc-400">
-            Break down ownership structures, map author behavior, and contrast the current article against external context.
+          <p className="mt-3 max-w-3xl text-sm text-zinc-400 sm:text-base">
+            Huginn analyzes publisher ownership, author history, and AI-driven contrast to reveal hidden pressure behind every story.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -97,7 +102,7 @@ export function AnalyzerForm() {
               type="submit"
               disabled={status === STATUS.LOADING || !url.trim()}
               className={cn(
-                "rounded-xl border border-cyan-300/40 bg-cyan-500 px-5 py-3 text-sm font-semibold text-zinc-950 transition",
+                "anim-glow rounded-xl border border-cyan-300/40 bg-cyan-500 px-5 py-3 text-sm font-semibold text-zinc-950 transition",
                 "hover:bg-cyan-400 hover:shadow-[0_0_30px_rgba(34,211,238,0.35)]",
                 "disabled:cursor-not-allowed disabled:opacity-50",
               )}
@@ -105,10 +110,55 @@ export function AnalyzerForm() {
               {status === STATUS.LOADING ? "Analyzing..." : "Analyze"}
             </button>
           </form>
+
+          <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.1em] text-zinc-500">
+            Parses article data · maps ownership chain · tracks author patterns · generates narrative contrast
+          </p>
+
+          <div className="mt-7 grid gap-3 lg:grid-cols-3">
+            <div className="anim-fade-in-up rounded-xl border border-white/10 bg-zinc-900/60 p-4" style={{ animationDelay: "80ms" }}>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-cyan-300">
+                Layer 1
+              </p>
+              <p className="mt-1 text-sm font-medium text-zinc-100">Ownership Chain</p>
+              <p className="mt-1 text-xs text-zinc-400">
+                Tracks who owns the media outlet through Wikidata ownership links.
+              </p>
+            </div>
+            <div className="anim-fade-in-up rounded-xl border border-white/10 bg-zinc-900/60 p-4" style={{ animationDelay: "160ms" }}>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-emerald-300">
+                Layer 2
+              </p>
+              <p className="mt-1 text-sm font-medium text-zinc-100">Author History</p>
+              <p className="mt-1 text-xs text-zinc-400">
+                Pulls author coverage context from SerpApi and DuckDuckGo results.
+              </p>
+            </div>
+            <div className="anim-fade-in-up rounded-xl border border-white/10 bg-zinc-900/60 p-4" style={{ animationDelay: "240ms" }}>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-violet-300">
+                Layer 3
+              </p>
+              <p className="mt-1 text-sm font-medium text-zinc-100">Contrast Analysis</p>
+              <p className="mt-1 text-xs text-zinc-400">
+                Uses OpenRouter to synthesize ownership and author patterns into one report.
+              </p>
+            </div>
+          </div>
+
+          <div className="anim-fade-in mt-4 flex flex-wrap gap-2" style={{ animationDelay: "320ms" }}>
+            {["Postlight Parser", "Wikidata", "SerpApi", "DuckDuckGo", "OpenRouter"].map((source) => (
+              <span
+                key={source}
+                className="rounded-md border border-white/10 bg-zinc-900/60 px-2.5 py-1 text-[11px] text-zinc-400"
+              >
+                {source}
+              </span>
+            ))}
+          </div>
         </section>
 
         {status === STATUS.LOADING && (
-          <div className="mt-10 flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-zinc-950/70 px-5 py-6 text-zinc-400 backdrop-blur">
+          <div className="anim-fade-in-up mt-10 flex flex-col items-center gap-3 rounded-xl border border-white/10 bg-zinc-950/70 px-5 py-6 text-zinc-400 backdrop-blur">
             <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-600 border-t-cyan-400" />
             <p className="text-sm">
               Extracting article data · Running parallel search · Querying Wikidata · Generating analysis...
@@ -117,14 +167,41 @@ export function AnalyzerForm() {
         )}
 
         {status === STATUS.ERROR && (
-          <div className="mt-8 rounded-xl border border-red-800/70 bg-red-950/40 px-5 py-4 text-sm text-red-300">
+          <div className="anim-fade-in-up mt-8 rounded-xl border border-red-800/70 bg-red-950/40 px-5 py-4 text-sm text-red-300">
             <span className="font-semibold">Error: </span>
             {errorMsg}
           </div>
         )}
 
         {status === STATUS.SUCCESS && result && (
-          <div className="mt-8 grid gap-6 lg:grid-cols-3">
+          <div className="anim-fade-in-up mt-8 grid gap-6 lg:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-3 lg:col-span-3">
+              <div className="rounded-xl border border-white/10 bg-zinc-900/70 p-4">
+                <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-500">
+                  Ownership nodes
+                </p>
+                <p className="mt-1 text-2xl font-semibold text-zinc-100">
+                  {result.ownership.chain.length}
+                </p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-zinc-900/70 p-4">
+                <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-500">
+                  Author articles
+                </p>
+                <p className="mt-1 text-2xl font-semibold text-zinc-100">
+                  {result.authorHistory.articles.length}
+                </p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-zinc-900/70 p-4">
+                <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-500">
+                  Active alerts
+                </p>
+                <p className="mt-1 text-2xl font-semibold text-zinc-100">
+                  {result.alerts.length}
+                </p>
+              </div>
+            </div>
+
             <Section tag="Layer 1" label="Media Outlet" color="cyan">
               <Field label="Domain" value={result.article.domain} />
               <Field label="Title" value={result.article.title} />
@@ -278,7 +355,7 @@ export function AnalyzerForm() {
               )}
             </div>
 
-            {result.alerts.length > 0 && (
+            {(result.alerts?.length ?? 0) > 0 && (
               <div className="rounded-xl border border-amber-400/20 bg-amber-950/10 p-5 backdrop-blur lg:col-span-3">
                 <div className="mb-4 flex items-center gap-2">
                   <span className="rounded-md border border-amber-300/30 bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-200">

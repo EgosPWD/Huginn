@@ -74,8 +74,9 @@ export async function POST(request: NextRequest) {
     ];
 
     // Step 4 — Narrative Divergence Score (embeddings in parallel)
-    const globalSnippets = globalContext.map((r) => r.snippet || r.title).filter(Boolean);
-    const authorSnippets = mergedAuthorArticles.map((r) => r.snippet || r.title).filter(Boolean);
+    // 2 each = 4 calls total — minimum viable for centroid comparison
+    const globalSnippets = globalContext.map((r) => r.snippet || r.title).filter(Boolean).slice(0, 2);
+    const authorSnippets = mergedAuthorArticles.map((r) => r.snippet || r.title).filter(Boolean).slice(0, 2);
 
     const NULL_DIVERGENCE: NarrativeDivergence = {
       score: null,
