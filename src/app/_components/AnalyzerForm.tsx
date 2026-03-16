@@ -51,25 +51,29 @@ export function AnalyzerForm() {
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#05080f] text-zinc-100">
-      <div className="pointer-events-none absolute inset-0">
+      <div className="pointer-events-none fixed inset-0">
         <div className="absolute -left-24 top-0 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
         <div className="absolute right-0 top-1/3 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(20,184,166,0.1),transparent_50%),linear-gradient(to_bottom,rgba(10,14,24,0.98),rgba(5,8,15,1))]" />
       </div>
 
-      <header className="relative border-b border-white/10 px-6 py-5">
-        <div className="anim-fade-in mx-auto flex w-full max-w-6xl items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold tracking-[0.16em] text-zinc-100">
-              HUGINN
-            </h1>
-            <p className="mt-1 text-sm text-zinc-400">
-              Media intelligence across ownership, authorship, and narrative contrast
-            </p>
+      <header className="sticky top-0 z-30 px-4 pb-2 pt-4 sm:px-6">
+        <div className="anim-header-in relative mx-auto w-full max-w-6xl overflow-hidden rounded-2xl border border-cyan-300/20 bg-zinc-900/45 px-5 py-4 shadow-[0_18px_60px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl">
+          <div className="anim-sheen pointer-events-none absolute inset-0 bg-[linear-gradient(110deg,transparent_20%,rgba(255,255,255,0.07)_48%,transparent_70%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_-20%,rgba(34,211,238,0.2),transparent_40%),radial-gradient(circle_at_90%_120%,rgba(16,185,129,0.16),transparent_45%)]" />
+          <div className="relative mx-auto flex w-full max-w-6xl items-center justify-between gap-3">
+            <div>
+              <h1 className="text-xl font-semibold tracking-[0.16em] text-zinc-100 sm:text-2xl">
+                HUGINN
+              </h1>
+              <p className="mt-1 text-xs text-zinc-300 sm:text-sm">
+                Media intelligence across ownership, authorship, and narrative contrast
+              </p>
+            </div>
+            <span className="anim-breathe rounded-full border border-cyan-300/40 bg-cyan-500/12 px-3 py-1 text-xs font-semibold text-cyan-100 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+              Live Analysis
+            </span>
           </div>
-          <span className="rounded-full border border-cyan-400/40 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200">
-            Live Analysis
-          </span>
         </div>
       </header>
 
@@ -428,7 +432,7 @@ export function AnalyzerForm() {
       <footer className="relative border-t border-white/10 px-6 py-5">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-3 text-sm text-zinc-400 sm:flex-row sm:items-center">
           <p className="text-xs tracking-wide text-zinc-500">
-            HUGINN MEDIA INTELLIGENCE
+            HUGINN MEDIA INTELLIGENCE · (c) {new Date().getFullYear()}
           </p>
 
           <div className="flex items-center gap-2">
