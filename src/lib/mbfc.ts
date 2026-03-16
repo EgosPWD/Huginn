@@ -40,13 +40,30 @@ async function loadCache(): Promise<Map<string, MBFCRecord>> {
   );
 
   if (!response.ok) {
-    console.error(`MBFC API error: ${response.status}`);
-    cache = new Map();
-    return cache;
+    console.error(`[MBFC] API error: ${response.status} — not caching, will retry next request`);
+    return new Map();
   }
 
   const data: unknown = await response.json();
-  const records: MBFCRecord[] = Array.isArray(data) ? data : [];
+
+  // Debug: log shape so we can see what the API actually returns
+  if (Array.isArray(data)) {
+    console.log(`[MBFC] Loaded ${data.length} records (array). First record:`, JSON.stringify(data[0]));
+  } else if (data && typeof data === "object") {
+    console.log(`[MBFC] Response is object, keys:`, Object.keys(data as object));
+  } else {
+    console.log(`[MBFC] Unexpected response type:`, typeof data);
+  }
+
+  // Support both a top-level array and a wrapped { data: [...] } shape
+  let records: MBFCRecord[] = [];
+  if (Array.isArray(data)) {
+    records = data as MBFCRecord[];
+  } else if (data && typeof data === "object") {
+    const obj = data as Record<string, unknown>;
+    const nested = Object.values(obj).find(Array.isArray);
+    if (nested) records = nested as MBFCRecord[];
+  }
 
   cache = new Map(
     records
@@ -54,6 +71,7 @@ async function loadCache(): Promise<Map<string, MBFCRecord>> {
       .map((r) => [normalizeDomain(r["Source URL"]), r]),
   );
 
+  console.log(`[MBFC] Cache built with ${cache.size} entries`);
   return cache;
 }
 
@@ -62,8 +80,13 @@ export async function getMBFCRating(domain: string): Promise<MBFCRating | null> 
 
   try {
     const map = await loadCache();
-    const record = map.get(normalizeDomain(domain));
-    if (!record) return null;
+    const normalized = normalizeDomain(domain);
+    console.log(`[MBFC] Looking up "${normalized}" in cache (${map.size} entries)`);
+    const record = map.get(normalized);
+    if (!record) {
+      console.log(`[MBFC] No match for "${normalized}"`);
+      return null;
+    }
 
     return {
       bias: record.Bias ?? "",
