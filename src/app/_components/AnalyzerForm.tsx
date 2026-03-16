@@ -2,7 +2,7 @@
 
 import { type FormEvent, type ReactNode, useState } from "react";
 import { cn } from "@/lib/utils";
-import type { AnalysisResponse, AuthorTopicMap } from "@/types/analysis";
+import type { AnalysisResponse, AuthorTopicMap, MBFCRating } from "@/types/analysis";
 
 const STATUS = {
   IDLE: "idle",
@@ -214,6 +214,7 @@ export function AnalyzerForm() {
                 value={result.ownership.chain.join(" → ") || "Not found"}
               />
               <Field label="Summary" value={result.ownership.summary} />
+              {result.mbfc && <MBFCBadges mbfc={result.mbfc} />}
             </Section>
 
             <Section tag="Layer 2" label="Author" color="emerald">
@@ -532,6 +533,52 @@ function Field({ label, value }: FieldProps) {
         {label}
       </p>
       <p className="mt-0.5 text-sm text-zinc-200">{value || "-"}</p>
+    </div>
+  );
+}
+
+// --- MBFC Badges ---
+
+function biasColor(bias: string): string {
+  const b = bias.toUpperCase();
+  if (b === "LEFT" || b === "FAR LEFT" || b === "RIGHT" || b === "FAR RIGHT" || b === "CONSPIRACY-PSEUDOSCIENCE" || b === "SATIRE") {
+    return "border-red-500/40 bg-red-500/10 text-red-300";
+  }
+  if (b === "LEFT-CENTER" || b === "RIGHT-CENTER") {
+    return "border-orange-500/40 bg-orange-500/10 text-orange-300";
+  }
+  if (b === "CENTER" || b === "LEAST BIASED") {
+    return "border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
+  }
+  return "border-zinc-500/40 bg-zinc-500/10 text-zinc-300";
+}
+
+function factualColor(value: string): string {
+  const v = value.toUpperCase();
+  if (v === "HIGH" || v === "VERY HIGH") return "border-emerald-500/40 bg-emerald-500/10 text-emerald-300";
+  if (v === "MOSTLY FACTUAL") return "border-yellow-500/40 bg-yellow-500/10 text-yellow-300";
+  if (v === "MIXED") return "border-yellow-500/40 bg-yellow-500/10 text-yellow-300";
+  if (v.includes("LOW")) return "border-red-500/40 bg-red-500/10 text-red-300";
+  return "border-zinc-500/40 bg-zinc-500/10 text-zinc-300";
+}
+
+function MBFCBadges({ mbfc }: { mbfc: MBFCRating }) {
+  return (
+    <div className="mb-3 rounded-lg border border-white/5 bg-zinc-900/60 px-3 py-2">
+      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
+        MBFC Rating · {mbfc.sourceName}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <span className={cn("rounded-md border px-2.5 py-1 text-xs font-semibold", biasColor(mbfc.bias))}>
+          Bias: {mbfc.bias}
+        </span>
+        <span className={cn("rounded-md border px-2.5 py-1 text-xs font-semibold", factualColor(mbfc.factualReporting))}>
+          Factual: {mbfc.factualReporting}
+        </span>
+        <span className={cn("rounded-md border px-2.5 py-1 text-xs font-semibold", factualColor(mbfc.credibility))}>
+          Credibility: {mbfc.credibility}
+        </span>
+      </div>
     </div>
   );
 }

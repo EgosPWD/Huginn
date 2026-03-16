@@ -118,6 +118,16 @@ export interface Alert {
   message: string;
 }
 
+// --- MBFC (Media Bias Fact Check) rating ---
+
+export interface MBFCRating {
+  bias: string;
+  factualReporting: string;
+  credibility: string;
+  country: string;
+  sourceName: string;
+}
+
 // --- Full analysis response ---
 
 export interface AnalysisResponse {
@@ -129,6 +139,7 @@ export interface AnalysisResponse {
   alerts: Alert[];
   raw: RawContext;
   authorTopicMap: AuthorTopicMap;
+  mbfc: MBFCRating | null;
 }
 
 // --- API request ---

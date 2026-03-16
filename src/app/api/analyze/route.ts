@@ -13,6 +13,7 @@ import { getEmbeddings, getEmbeddingsIndexed } from "@/lib/embeddings";
 import { centroid, cosineSimilarity, divergenceScore } from "@/lib/vector-math";
 import { interpretDivergence } from "@/lib/interpret";
 import { generateAlerts } from "@/lib/bias-alerts";
+import { getMBFCRating } from "@/lib/mbfc";
 import type { AnalysisResponse, AnalyzeRequest, NarrativeDivergence } from "@/types/analysis";
 
 export async function POST(request: NextRequest) {
@@ -44,13 +45,14 @@ export async function POST(request: NextRequest) {
     //   SerpApi (global context + author articles)
     //   DDG author (bio + 4 queries)
     //   DDG topic (article topic context, SerpApi fallback)
-    const [wikidataChain, { globalContext, authorContext }, ddgAuthor, topicContext, authorByNameResults] =
+    const [wikidataChain, { globalContext, authorContext }, ddgAuthor, topicContext, authorByNameResults, mbfc] =
       await Promise.all([
         buildOwnershipChain(article.domain),
         searchDual(article.title, article.author, article.domain),
         searchAuthorDDG(article.author, article.domain),
         searchTopicDDG(article.title),
         searchAuthorByName(article.author),
+        getMBFCRating(article.domain),
       ]);
 
     // Step 3 — DDG outlet enrichment (needs owner name from Wikidata)
@@ -172,9 +174,10 @@ export async function POST(request: NextRequest) {
       authorHistory,
       contrast,
       narrativeDivergence,
-      alerts: generateAlerts({ article, ownership, authorHistory, contrast, narrativeDivergence, alerts: [], raw }),
+      alerts: generateAlerts({ article, ownership, authorHistory, contrast, narrativeDivergence, alerts: [], raw, authorTopicMap, mbfc }),
       raw,
       authorTopicMap,
+      mbfc,
     };
 
     return NextResponse.json(response);
