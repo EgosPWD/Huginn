@@ -18,10 +18,14 @@ export function AnalyzerForm() {
   const [status, setStatus] = useState<Status>(STATUS.IDLE);
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [urlTouched, setUrlTouched] = useState(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!url.trim()) return;
+    if (!url.trim()) {
+      setUrlTouched(true);
+      return;
+    }
 
     setStatus(STATUS.LOADING);
     setResult(null);
@@ -95,16 +99,21 @@ export function AnalyzerForm() {
             <input
               type="url"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={(e) => { setUrl(e.target.value); setUrlTouched(false); }}
               placeholder="https://example.com/news-story"
+              aria-label="article-url-input"
               className={cn(
-                "flex-1 rounded-xl border border-zinc-700/80 bg-zinc-900/85 px-4 py-3 text-sm text-zinc-100",
-                "placeholder:text-zinc-500 focus:border-cyan-400/70 focus:outline-none focus:ring-2 focus:ring-cyan-500/40",
+                "flex-1 rounded-xl border bg-zinc-900/85 px-4 py-3 text-sm text-zinc-100",
+                "placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/40",
+                urlTouched && !url.trim()
+                  ? "border-red-500/70 focus:border-red-500/70"
+                  : "border-zinc-700/80 focus:border-cyan-400/70",
               )}
             />
             <button
               type="submit"
-              disabled={status === STATUS.LOADING || !url.trim()}
+              aria-label="analyze-form-submit"
+              disabled={status === STATUS.LOADING}
               className={cn(
                 "anim-glow rounded-xl border border-cyan-300/40 bg-cyan-500 px-5 py-3 text-sm font-semibold text-zinc-950 transition",
                 "hover:bg-cyan-400 hover:shadow-[0_0_30px_rgba(34,211,238,0.35)]",
@@ -114,6 +123,9 @@ export function AnalyzerForm() {
               {status === STATUS.LOADING ? "Analyzing..." : "Analyze"}
             </button>
           </form>
+          {urlTouched && !url.trim() && (
+            <p className="mt-2 text-xs text-red-400">Please enter a valid article URL.</p>
+          )}
 
           <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.1em] text-zinc-500">
             Parses article data · maps ownership chain · tracks author patterns · generates narrative contrast

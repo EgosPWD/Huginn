@@ -28,23 +28,31 @@ async function fetchMetaFallback(
 
     const html = await response.text();
 
-    // og:title — two attribute orders
+    // og:title — double and single quotes, both attribute orders + twitter fallback + <title>
     const titleMatch =
       html.match(/property="og:title"\s+content="([^"]+)"/) ??
       html.match(/content="([^"]+)"\s+property="og:title"/) ??
-      html.match(/<title[^>]*>([^<]+)<\/title>/);
+      html.match(/property='og:title'\s+content='([^']+)'/) ??
+      html.match(/content='([^']+)'\s+property='og:title'/) ??
+      html.match(/name="twitter:title"\s+content="([^"]+)"/) ??
+      html.match(/content="([^"]+)"\s+name="twitter:title"/) ??
+      html.match(/<title[^>]*>\s*([^<]+?)\s*<\/title>/i);
 
-    // author meta — standard and OG variants
+    // author meta — standard, OG, and twitter variants
     const authorMatch =
       html.match(/name="author"\s+content="([^"]+)"/) ??
       html.match(/content="([^"]+)"\s+name="author"/) ??
       html.match(/property="article:author"\s+content="([^"]+)"/) ??
-      html.match(/content="([^"]+)"\s+property="article:author"/);
+      html.match(/content="([^"]+)"\s+property="article:author"/) ??
+      html.match(/name="twitter:creator"\s+content="([^"@][^"]+)"/) ??
+      html.match(/"author"\s*:\s*\{\s*"@type"[^}]*"name"\s*:\s*"([^"]+)"/);
 
-    // og:description as content preview
+    // og:description — double and single quotes
     const descMatch =
       html.match(/property="og:description"\s+content="([^"]+)"/) ??
-      html.match(/content="([^"]+)"\s+property="og:description"/);
+      html.match(/content="([^"]+)"\s+property="og:description"/) ??
+      html.match(/property='og:description'\s+content='([^']+)'/) ??
+      html.match(/name="description"\s+content="([^"]+)"/);
 
     return {
       title: titleMatch?.[1]?.trim() ?? null,
